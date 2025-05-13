@@ -15,7 +15,7 @@ COPY build/bundle/ ./
 # Set environment variables
 ENV PORT=8080
 ENV ROOT_URL=https://your-app-url.run.app
-ENV MONGO_URL: "mongodb+srv://karanpatelpkpkp:<db_password>@cluster0.8otfoq6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+ENV MONGO_URL: "mongodb+srv://karanpatelpkpkp:<34KPkaran12@#>@cluster0.8otfoq6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # Expose port for Cloud Run
 EXPOSE 8080
