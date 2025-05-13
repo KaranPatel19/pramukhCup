@@ -1,11 +1,9 @@
 import React from 'react';
-import { Hello } from './Hello';
-import { Info } from './Info';
+import { PlayerUpload } from './PlayerUpload';
 
 export const App: React.FC = () => (
-  <div>
-    <h1>Welcome to Meteor!</h1>
-    <Hello />
-    <Info />
+  <div className="main-container">
+    <h1>Player Management System</h1>
+    <PlayerUpload />
   </div>
 );

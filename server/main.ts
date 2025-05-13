@@ -1,5 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { LinksCollection } from '/imports/api/links';
+import { PlayersCollection } from '/imports/api/players';
+
+// Import methods to ensure they're registered
+import '/imports/api/methods/playerMethods';
 
 async function insertLink({ title, url }: { title: string; url: string }) {
   await LinksCollection.insertAsync({ title, url, createdAt: new Date() });
@@ -35,6 +39,11 @@ Meteor.startup(async () => {
     // In order to be fetched in real-time to the clients
     Meteor.publish("links", function () {
       return LinksCollection.find();
+    });
+
+    // Publish players collection
+    Meteor.publish("players", function () {
+      return PlayersCollection.find();
     });
   } catch (error) {
     console.error('Error during startup:', error);
