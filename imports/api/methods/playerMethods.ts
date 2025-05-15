@@ -36,12 +36,14 @@ Meteor.methods({
 
         // Create a player object
         const newPlayer: Omit<PlayerType, '_id'> = {
-          name: player.name,
-          number: Number(player.number), // Ensure number is a Number type
-          email: player.email,
-          type: player.type,
-          createdAt: new Date(),
-        };
+        name: player.name,
+        number: Number(player.number),
+        email: player.email,
+        type: player.type,
+        teamId: undefined, // You can replace `undefined` with an actual teamId if applicable
+        createdAt: new Date(),
+      };
+
 
         // Insert the player
         PlayersCollection.insertAsync(newPlayer);

@@ -6,6 +6,7 @@ export interface PlayerType {
   number: number;
   email: string;
   type: string;
+  teamId?: string;
   createdAt: Date;
 }
 

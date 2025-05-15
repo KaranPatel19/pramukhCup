@@ -67,7 +67,7 @@ export const PlayerUpload: React.FC = () => {
 
   return (
     <div className="players-container">
-      <h2>Players Upload</h2>
+      <h2>Players Management</h2>
       
       <div className="upload-section">
         <p>Upload a CSV file with player data. The CSV should have columns: name, number, email, and type.</p>
