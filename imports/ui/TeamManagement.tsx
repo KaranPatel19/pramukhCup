@@ -33,12 +33,39 @@ export const TeamManagement: React.FC = () => {
   });
 
     const { teamsFromDb } = useTracker(() => {
-        const sub = Meteor.subscribe('teams');
-        return {
-        teamsFromDb: sub.ready() ? TeamsCollection.find({}, { sort: { createdAt: -1 } }).fetch() : [],
-        };
+    const sub = Meteor.subscribe('teams');
+    return {
+      teamsFromDb: sub.ready() ? TeamsCollection.find({}, { sort: { createdAt: -1 } }).fetch() : [],
+    };
     }, []);
-
+    useEffect(() => {
+  if (teamsFromDb.length > 0 && players.length > 0) {
+    const enrichedTeams: Team[] = teamsFromDb.map(team => {
+      // Find all players that belong to this team
+      const teamMembers = players
+        .filter(player => player.teamId === team._id)
+        .map(player => ({
+          ...player,
+          isCaptain: false // You might want to store this in the database too
+        }));
+      
+      return {
+        ...team,
+        members: teamMembers
+      };
+    });
+    
+    setTeams(enrichedTeams);
+    
+    // If there's a selected team, update it with the enriched version
+    if (currentTeam) {
+      const updatedCurrentTeam = enrichedTeams.find(team => team._id === currentTeam._id);
+      if (updatedCurrentTeam) {
+        setCurrentTeam(updatedCurrentTeam);
+      }
+    }
+  }
+}, [teamsFromDb, players]);
     useEffect(() => {
     const enrichedTeams: Team[] = teamsFromDb.map(team => ({
         ...team,
@@ -118,18 +145,25 @@ export const TeamManagement: React.FC = () => {
 
 
   const addPlayerToTeam = (player: PlayerType) => {
-    if (!currentTeam) {
-      setErrorMessage('Please select a team first');
+  if (!currentTeam) {
+    setErrorMessage('Please select a team first');
+    return;
+  }
+
+  // Check if player is already in the team
+  if (currentTeam.members.some(member => member._id === player._id)) {
+    setErrorMessage(`${player.name} is already in ${currentTeam.name}`);
+    return;
+  }
+
+  // Add player to team in database
+  Meteor.call('teams.addPlayer', currentTeam._id, player._id, (error: Error | null) => {
+    if (error) {
+      setErrorMessage(`Error adding player: ${error.message}`);
       return;
     }
 
-    // Check if player is already in the team
-    if (currentTeam.members.some(member => member._id === player._id)) {
-      setErrorMessage(`${player.name} is already in ${currentTeam.name}`);
-      return;
-    }
-
-    // Add player to team as a regular member
+    // Add player to local state
     const newMember: TeamMember = {
       ...player,
       isCaptain: false
@@ -154,10 +188,18 @@ export const TeamManagement: React.FC = () => {
     setTimeout(() => {
       setSuccessMessage(null);
     }, 3000);
-  };
+  });
+};
 
-  const removePlayerFromTeam = (playerId: string) => {
-    if (!currentTeam) return;
+const removePlayerFromTeam = (playerId: string) => {
+  if (!currentTeam) return;
+
+  // Remove player from team in database
+  Meteor.call('teams.removePlayer', playerId, (error: Error | null) => {
+    if (error) {
+      setErrorMessage(`Error removing player: ${error.message}`);
+      return;
+    }
 
     const updatedMembers = currentTeam.members.filter(member => member._id !== playerId);
     const updatedTeam = {
@@ -172,7 +214,8 @@ export const TeamManagement: React.FC = () => {
 
     setTeams(updatedTeams);
     setCurrentTeam(updatedTeam);
-  };
+  });
+};
 
   const toggleCaptain = (playerId: string) => {
     if (!currentTeam) return;
