@@ -1,0 +1,177 @@
+/* client/dark-mode.css */
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.dark-mode .main-container {
+  background: #2d2d2d;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode h1 {
+  color: #80b3ff;
+}
+
+.dark-mode h2 {
+  color: #58a6ff;
+  border-bottom: 2px solid #3d3d3d;
+}
+
+.dark-mode h3 {
+  color: #58a6ff;
+}
+
+.dark-mode .upload-section,
+.dark-mode .team-list-panel, 
+.dark-mode .team-detail-panel, 
+.dark-mode .available-players-panel {
+  background-color: #333;
+}
+
+.dark-mode input[type="file"],
+.dark-mode input[type="text"] {
+  border: 1px solid #444;
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+.dark-mode .btn-primary {
+  background-color: #2980b9;
+}
+
+.dark-mode .btn-primary:hover {
+  background-color: #3498db;
+}
+
+.dark-mode .btn-team {
+  background-color: #27ae60;
+}
+
+.dark-mode .btn-team:hover {
+  background-color: #2ecc71;
+}
+
+.dark-mode .tab-button {
+  color: #aaa;
+}
+
+.dark-mode .tab-button:hover,
+.dark-mode .tab-button.active {
+  color: #58a6ff;
+}
+
+.dark-mode .tab-button.active {
+  border-bottom-color: #58a6ff;
+}
+
+.dark-mode .players-table th,
+.dark-mode .team-members-table th,
+.dark-mode .available-players-table th {
+  background-color: #3d3d3d;
+}
+
+.dark-mode .players-table td,
+.dark-mode .team-members-table td,
+.dark-mode .available-players-table td,
+.dark-mode .players-table th,
+.dark-mode .team-members-table th,
+.dark-mode .available-players-table th {
+  border-bottom: 1px solid #444;
+}
+
+.dark-mode .players-table tr:hover,
+.dark-mode .team-members-table tr:hover,
+.dark-mode .available-players-table tr:hover {
+  background-color: #3a3a3a;
+}
+
+.dark-mode .teams-list li {
+  border-bottom: 1px solid #444;
+}
+
+.dark-mode .teams-list li:hover {
+  background-color: #3a3a3a;
+}
+
+.dark-mode .teams-list li.selected {
+  background-color: #2c3e50;
+  border-left: 3px solid #58a6ff;
+}
+
+.dark-mode .team-members-count {
+  color: #bbb;
+}
+
+.dark-mode .no-data {
+  color: #aaa;
+}
+
+/* Database inspector styles */
+.dark-mode .db-stats {
+  background-color: #333;
+  border-bottom: 1px solid #444;
+}
+
+.dark-mode .db-record {
+  border-bottom: 1px solid #444;
+}
+
+.dark-mode .db-record-header {
+  background-color: #2d2d2d;
+}
+
+.dark-mode .db-record-header:hover {
+  background-color: #3a3a3a;
+}
+
+.dark-mode .db-record-id {
+  color: #aaa;
+}
+
+.dark-mode .db-record-json {
+  background-color: #333;
+  border-top: 1px solid #444;
+}
+
+.dark-mode .inspector-tips {
+  background-color: #333;
+  border-left: 5px solid #58a6ff;
+}
+
+.dark-mode .inspector-tips code {
+  background-color: #444;
+}
+
+/* Toggle button styles */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 24px;
+  line-height: 1;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.highlighted-row.dark-mode {
+  background-color: #996c00 !important;
+}

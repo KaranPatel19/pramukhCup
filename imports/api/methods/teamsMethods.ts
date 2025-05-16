@@ -11,18 +11,6 @@ Meteor.methods({
   'teams.remove'(teamId: string) {
     check(teamId, String);
     return TeamsCollection.removeAsync({ _id: teamId });
-  }
-});
-// Add this to imports/api/methods/teamsMethods.ts
-Meteor.methods({
-  'teams.insert'(name: string) {
-    check(name, String);
-    return TeamsCollection.insertAsync({ name, createdAt: new Date() });
-  },
-
-  'teams.remove'(teamId: string) {
-    check(teamId, String);
-    return TeamsCollection.removeAsync({ _id: teamId });
   },
 
   // Add this new method
@@ -42,6 +30,7 @@ Meteor.methods({
     return Meteor.call('players.update', playerId, { teamId: undefined });
   }
 });
+
 if (Meteor.isServer) {
   Meteor.publish('teams', function () {
     return TeamsCollection.find();
