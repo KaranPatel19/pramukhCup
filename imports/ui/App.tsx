@@ -30,7 +30,7 @@ export const App: React.FC = () => {
       <div className="main-container">
         <ThemeToggle />
         
-        <h1>Player Management System</h1>
+        <h1>Pramukh Cup</h1>
         
         <div className="app-tabs">
           <button 
@@ -61,7 +61,7 @@ export const App: React.FC = () => {
         
         {activeTab === 'home' && (
           <div className="home-content">
-            <h2>Welcome to the Player Management System</h2>
+            <h2>Welcome to the Pramukh Cup</h2>
             <p>This application allows you to manage your team's players efficiently.</p>
             <p>You can upload player data via CSV files, create teams, assign captains, and monitor your database.</p>
             

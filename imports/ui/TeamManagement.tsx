@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
 import { PlayersCollection, PlayerType } from '../api/players';
 import { TeamsCollection } from '../api/teams';
+import { PlayerCard } from './PlayerCard';
 // Let's define interfaces for our team structure
 interface TeamMember extends PlayerType {
   isCaptain: boolean;
@@ -23,6 +24,7 @@ export const TeamManagement: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [choosing, setChoosing] = useState(false);
   const [highlightedPlayerId, setHighlightedPlayerId] = useState<string | null>(null);
+  const [selectedRandomPlayer, setSelectedRandomPlayer] = useState<PlayerType | null>(null);
 
   const { players, isLoading } = useTracker(() => {
     const subscription = Meteor.subscribe('players');
@@ -122,7 +124,7 @@ export const TeamManagement: React.FC = () => {
   let flashes = 0;
   let delay = 50;
 
-  const maxFlashes = 25;
+  const maxFlashes = 10; // Reduced for faster card appearance
   const flashPlayer = () => {
     const randomPlayer = availablePlayers[Math.floor(Math.random() * availablePlayers.length)];
     setHighlightedPlayerId(randomPlayer._id!);
@@ -132,16 +134,21 @@ export const TeamManagement: React.FC = () => {
       delay += 15; // slow down as we go
       setTimeout(flashPlayer, delay);
     } else {
-      setTimeout(() => {
-        addPlayerToTeam(randomPlayer);
-        setHighlightedPlayerId(null);
-        setChoosing(false);
-      }, 300);
+      // When done flashing, show the player card
+      setHighlightedPlayerId(null);
+      setSelectedRandomPlayer(randomPlayer);
+      setChoosing(false);
     }
   };
 
   flashPlayer();
 };
+  const handleAddSelectedPlayer = () => {
+    if (selectedRandomPlayer && currentTeam) {
+      addPlayerToTeam(selectedRandomPlayer);
+      setSelectedRandomPlayer(null);
+    }
+  };
 
 
   const addPlayerToTeam = (player: PlayerType) => {
@@ -183,6 +190,7 @@ export const TeamManagement: React.FC = () => {
     setCurrentTeam(updatedTeam);
     setSuccessMessage(`${player.name} added to ${currentTeam.name}`);
     setErrorMessage(null);
+    setSelectedRandomPlayer(null); // Close the player card after adding
 
     // Clear success message after 3 seconds
     setTimeout(() => {
@@ -416,6 +424,12 @@ const removePlayerFromTeam = (playerId: string) => {
           )}
         </div>
       </div>
+      {selectedRandomPlayer && (
+        <PlayerCard 
+          player={selectedRandomPlayer} 
+          onClose={handleAddSelectedPlayer} 
+        />
+      )}
     </div>
   );
 };
