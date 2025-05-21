@@ -189,7 +189,16 @@ export const TeamManagement: React.FC = () => {
     }, 3000);
   });
 };
-
+// Helper function to get card background color based on player type
+const getPlayerCardBackground = (type: string) => {
+  switch (type.toLowerCase()) {
+    case 'goalkeeper': return 'linear-gradient(135deg, #e74c3c, #c0392b)';
+    case 'defender': return 'linear-gradient(135deg, #3498db, #2980b9)';
+    case 'midfielder': return 'linear-gradient(135deg, #2ecc71, #27ae60)';
+    case 'forward': return 'linear-gradient(135deg, #f1c40f, #f39c12)';
+    default: return 'linear-gradient(135deg, #9b59b6, #8e44ad)';
+  }
+};
 const removePlayerFromTeam = (playerId: string) => {
   if (!currentTeam) return;
 
@@ -416,17 +425,27 @@ const removePlayerFromTeam = (playerId: string) => {
         </div>
       </div>
       {isShuffling && (
-        <div className="player-card-overlay">
-          <div className="shuffling-deck">
-            {/* Create 5 cards that shuffle across the screen */}
-            <div className="shuffling-card card-1"></div>
-            <div className="shuffling-card card-2"></div>
-            <div className="shuffling-card card-3"></div>
-            <div className="shuffling-card card-4"></div>
-            <div className="shuffling-card card-5"></div>
-          </div>
+      <div className="player-card-overlay">
+        <div className="shuffling-deck">
+          {availablePlayers.map((player, index) => (
+            <div 
+              key={player._id} 
+              className={`shuffling-card card-${index % 5 + 1}`}
+              style={{ 
+                background: getPlayerCardBackground(player.type),
+                color: 'white'
+              }}
+            >
+              <div className="shuffling-card-content">
+                <div className="shuffling-card-number">#{player.number}</div>
+                <div className="shuffling-card-name">{player.name}</div>
+                <div className="shuffling-card-type">{player.type}</div>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
+    )}
       {selectedRandomPlayer && (
         <PlayerCard 
           player={selectedRandomPlayer} 
