@@ -24,6 +24,8 @@ export const TeamManagement: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [choosing, setChoosing] = useState(false);
   const [highlightedPlayerId, setHighlightedPlayerId] = useState<string | null>(null);
+  const [isShuffling, setIsShuffling] = useState(false);
+  const [shufflingCards, setShufflingCards] = useState<PlayerType[]>([]);
   const [selectedRandomPlayer, setSelectedRandomPlayer] = useState<PlayerType | null>(null);
 
   const { players, isLoading } = useTracker(() => {
@@ -121,27 +123,16 @@ export const TeamManagement: React.FC = () => {
   if (!currentTeam || availablePlayers.length === 0) return;
 
   setChoosing(true);
-  let flashes = 0;
-  let delay = 50;
-
-  const maxFlashes = 10; // Reduced for faster card appearance
-  const flashPlayer = () => {
+  setIsShuffling(true);
+  
+  // Display shuffling animation for 4 seconds
+  setTimeout(() => {
+    // After animation completes, select a random player
     const randomPlayer = availablePlayers[Math.floor(Math.random() * availablePlayers.length)];
-    setHighlightedPlayerId(randomPlayer._id!);
-    flashes++;
-
-    if (flashes < maxFlashes) {
-      delay += 15; // slow down as we go
-      setTimeout(flashPlayer, delay);
-    } else {
-      // When done flashing, show the player card
-      setHighlightedPlayerId(null);
-      setSelectedRandomPlayer(randomPlayer);
-      setChoosing(false);
-    }
-  };
-
-  flashPlayer();
+    setIsShuffling(false);
+    setSelectedRandomPlayer(randomPlayer);
+    setChoosing(false);
+  }, 4000); // Changed from 2000 to 4000 for 4 seconds of animation
 };
   const handleAddSelectedPlayer = () => {
     if (selectedRandomPlayer && currentTeam) {
@@ -424,6 +415,18 @@ const removePlayerFromTeam = (playerId: string) => {
           )}
         </div>
       </div>
+      {isShuffling && (
+        <div className="player-card-overlay">
+          <div className="shuffling-deck">
+            {/* Create 5 cards that shuffle across the screen */}
+            <div className="shuffling-card card-1"></div>
+            <div className="shuffling-card card-2"></div>
+            <div className="shuffling-card card-3"></div>
+            <div className="shuffling-card card-4"></div>
+            <div className="shuffling-card card-5"></div>
+          </div>
+        </div>
+      )}
       {selectedRandomPlayer && (
         <PlayerCard 
           player={selectedRandomPlayer} 
