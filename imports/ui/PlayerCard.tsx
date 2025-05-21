@@ -26,7 +26,6 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClose }) => {
     <div className="player-card-overlay" onClick={onClose}>
       <div className="player-card" onClick={(e) => e.stopPropagation()}>
         <div className="player-card-header" style={{ backgroundColor }}>
-          <span className="player-card-number">#{player.number}</span>
           <h2 className="player-card-name">{player.name}</h2>
         </div>
         <div className="player-card-body">

@@ -427,22 +427,25 @@ const removePlayerFromTeam = (playerId: string) => {
       {isShuffling && (
       <div className="player-card-overlay">
         <div className="shuffling-deck">
-          {availablePlayers.map((player, index) => (
-            <div 
-              key={player._id} 
-              className={`shuffling-card card-${index % 5 + 1}`}
-              style={{ 
-                background: getPlayerCardBackground(player.type),
-                color: 'white'
-              }}
-            >
-              <div className="shuffling-card-content">
-                <div className="shuffling-card-number">#{player.number}</div>
-                <div className="shuffling-card-name">{player.name}</div>
-                <div className="shuffling-card-type">{player.type}</div>
+          {availablePlayers.map((player, index) => {
+            // Use modulo 10 instead of modulo 5 to cycle through all 10 animations
+            const animationClass = `card-${(index % 10) + 1}`;
+            return (
+              <div 
+                key={player._id} 
+                className={`shuffling-card ${animationClass}`}
+                style={{ 
+                  background: getPlayerCardBackground(player.type),
+                  color: 'white'
+                }}
+              >
+                <div className="shuffling-card-content">
+                  <div className="shuffling-card-name">{player.name}</div>
+                  <div className="shuffling-card-type">{player.type}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     )}
