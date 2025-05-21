@@ -834,135 +834,113 @@ button:disabled {
   font-weight: bold;
 }
 
-/* Individual card animations */
-.card-1 {
-  animation: shuffle1 4s ease-in-out;
-  z-index: 5;
-}
-
-.card-2 {
-  animation: shuffle2 4s ease-in-out;
-  z-index: 4;
-}
-
-.card-3 {
-  animation: shuffle3 4s ease-in-out;
-  z-index: 3;
-}
-
-.card-4 {
-  animation: shuffle4 4s ease-in-out;
-  z-index: 2;
-}
-
-.card-5 {
-  animation: shuffle5 4s ease-in-out;
-  z-index: 1;
-}
-
 /* Keyframe animations for each card */
 @keyframes shuffle1 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  10% { transform: translate(-150%, -30%) rotate(-15deg) translateZ(100px); }
-  25% { transform: translate(100%, -70%) rotate(10deg) translateZ(50px); }
-  40% { transform: translate(-80%, 20%) rotate(-5deg) translateZ(150px); }
-  60% { transform: translate(60%, -40%) rotate(20deg) translateZ(100px); }
-  80% { transform: translate(-120%, -10%) rotate(-10deg) translateZ(50px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 1; }
+  10% { transform: translate(-150%, -30%) rotate(-15deg) translateZ(100px); z-index: 8; }
+  25% { transform: translate(100%, -70%) rotate(10deg) translateZ(50px); z-index: 3; }
+  40% { transform: translate(-80%, 20%) rotate(-5deg) translateZ(150px); z-index: 10; }
+  60% { transform: translate(60%, -40%) rotate(20deg) translateZ(100px); z-index: 5; }
+  80% { transform: translate(-120%, -10%) rotate(-10deg) translateZ(50px); z-index: 7; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 1; }
 }
 
 @keyframes shuffle2 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  15% { transform: translate(80%, 30%) rotate(15deg) translateZ(80px); }
-  30% { transform: translate(-100%, -20%) rotate(-8deg) translateZ(120px); }
-  45% { transform: translate(50%, 40%) rotate(5deg) translateZ(60px); }
-  65% { transform: translate(-70%, -50%) rotate(-20deg) translateZ(90px); }
-  85% { transform: translate(90%, 10%) rotate(10deg) translateZ(40px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 2; }
+  15% { transform: translate(80%, 30%) rotate(15deg) translateZ(80px); z-index: 6; }
+  30% { transform: translate(-100%, -20%) rotate(-8deg) translateZ(120px); z-index: 9; }
+  45% { transform: translate(50%, 40%) rotate(5deg) translateZ(60px); z-index: 4; }
+  65% { transform: translate(-70%, -50%) rotate(-20deg) translateZ(90px); z-index: 1; }
+  85% { transform: translate(90%, 10%) rotate(10deg) translateZ(40px); z-index: 8; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 2; }
 }
 
 @keyframes shuffle3 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  12% { transform: translate(-60%, 50%) rotate(12deg) translateZ(110px); }
-  28% { transform: translate(120%, -10%) rotate(-12deg) translateZ(70px); }
-  42% { transform: translate(-40%, -60%) rotate(8deg) translateZ(130px); }
-  62% { transform: translate(20%, 40%) rotate(-15deg) translateZ(50px); }
-  82% { transform: translate(-100%, -30%) rotate(5deg) translateZ(90px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 3; }
+  12% { transform: translate(-60%, 50%) rotate(12deg) translateZ(110px); z-index: 10; }
+  28% { transform: translate(120%, -10%) rotate(-12deg) translateZ(70px); z-index: 2; }
+  42% { transform: translate(-40%, -60%) rotate(8deg) translateZ(130px); z-index: 7; }
+  62% { transform: translate(20%, 40%) rotate(-15deg) translateZ(50px); z-index: 4; }
+  82% { transform: translate(-100%, -30%) rotate(5deg) translateZ(90px); z-index: 9; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 3; }
 }
 
 @keyframes shuffle4 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  18% { transform: translate(50%, -70%) rotate(-10deg) translateZ(100px); }
-  32% { transform: translate(-130%, 20%) rotate(15deg) translateZ(60px); }
-  48% { transform: translate(70%, 30%) rotate(-5deg) translateZ(120px); }
-  68% { transform: translate(-30%, -40%) rotate(10deg) translateZ(80px); }
-  88% { transform: translate(110%, -20%) rotate(-8deg) translateZ(40px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 4; }
+  18% { transform: translate(50%, -70%) rotate(-10deg) translateZ(100px); z-index: 7; }
+  32% { transform: translate(-130%, 20%) rotate(15deg) translateZ(60px); z-index: 1; }
+  48% { transform: translate(70%, 30%) rotate(-5deg) translateZ(120px); z-index: 10; }
+  68% { transform: translate(-30%, -40%) rotate(10deg) translateZ(80px); z-index: 3; }
+  88% { transform: translate(110%, -20%) rotate(-8deg) translateZ(40px); z-index: 6; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 4; }
 }
 
 @keyframes shuffle5 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  20% { transform: translate(-90%, -40%) rotate(-8deg) translateZ(90px); }
-  35% { transform: translate(60%, 60%) rotate(12deg) translateZ(50px); }
-  50% { transform: translate(-110%, -10%) rotate(-10deg) translateZ(110px); }
-  70% { transform: translate(40%, -60%) rotate(5deg) translateZ(70px); }
-  90% { transform: translate(-50%, 30%) rotate(-15deg) translateZ(40px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 5; }
+  20% { transform: translate(-90%, -40%) rotate(-8deg) translateZ(90px); z-index: 2; }
+  35% { transform: translate(60%, 60%) rotate(12deg) translateZ(50px); z-index: 8; }
+  50% { transform: translate(-110%, -10%) rotate(-10deg) translateZ(110px); z-index: 9; }
+  70% { transform: translate(40%, -60%) rotate(5deg) translateZ(70px); z-index: 1; }
+  90% { transform: translate(-50%, 30%) rotate(-15deg) translateZ(40px); z-index: 6; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 5; }
 }
 /* Additional card animations */
 @keyframes shuffle6 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  15% { transform: translate(-120%, 40%) rotate(15deg) translateZ(100px); }
-  35% { transform: translate(80%, -10%) rotate(-12deg) translateZ(70px); }
-  55% { transform: translate(-40%, -60%) rotate(8deg) translateZ(130px); }
-  75% { transform: translate(60%, 40%) rotate(-15deg) translateZ(50px); }
-  95% { transform: translate(-80%, -30%) rotate(5deg) translateZ(90px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 6; }
+  15% { transform: translate(-120%, 40%) rotate(15deg) translateZ(100px); z-index: 4; }
+  35% { transform: translate(80%, -10%) rotate(-12deg) translateZ(70px); z-index: 9; }
+  55% { transform: translate(-40%, -60%) rotate(8deg) translateZ(130px); z-index: 2; }
+  75% { transform: translate(60%, 40%) rotate(-15deg) translateZ(50px); z-index: 10; }
+  95% { transform: translate(-80%, -30%) rotate(5deg) translateZ(90px); z-index: 3; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 6; }
 }
 
 @keyframes shuffle7 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  20% { transform: translate(70%, -50%) rotate(-15deg) translateZ(120px); }
-  40% { transform: translate(-100%, 20%) rotate(10deg) translateZ(80px); }
-  60% { transform: translate(50%, -30%) rotate(-8deg) translateZ(140px); }
-  80% { transform: translate(-70%, 10%) rotate(12deg) translateZ(60px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 7; }
+  20% { transform: translate(70%, -50%) rotate(-15deg) translateZ(120px); z-index: 1; }
+  40% { transform: translate(-100%, 20%) rotate(10deg) translateZ(80px); z-index: 5; }
+  60% { transform: translate(50%, -30%) rotate(-8deg) translateZ(140px); z-index: 10; }
+  80% { transform: translate(-70%, 10%) rotate(12deg) translateZ(60px); z-index: 4; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 7; }
 }
 
 @keyframes shuffle8 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  25% { transform: translate(-40%, 70%) rotate(18deg) translateZ(90px); }
-  50% { transform: translate(90%, -20%) rotate(-14deg) translateZ(110px); }
-  75% { transform: translate(-60%, -30%) rotate(9deg) translateZ(70px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 8; }
+  25% { transform: translate(-40%, 70%) rotate(18deg) translateZ(90px); z-index: 3; }
+  50% { transform: translate(90%, -20%) rotate(-14deg) translateZ(110px); z-index: 9; }
+  75% { transform: translate(-60%, -30%) rotate(9deg) translateZ(70px); z-index: 1; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 8; }
 }
 
 @keyframes shuffle9 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  30% { transform: translate(60%, 60%) rotate(-20deg) translateZ(130px); }
-  60% { transform: translate(-130%, -40%) rotate(16deg) translateZ(85px); }
-  90% { transform: translate(40%, 10%) rotate(-10deg) translateZ(95px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 9; }
+  30% { transform: translate(60%, 60%) rotate(-20deg) translateZ(130px); z-index: 6; }
+  60% { transform: translate(-130%, -40%) rotate(16deg) translateZ(85px); z-index: 2; }
+  90% { transform: translate(40%, 10%) rotate(-10deg) translateZ(95px); z-index: 8; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 9; }
 }
 
 @keyframes shuffle10 {
-  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
-  15% { transform: translate(-80%, -70%) rotate(10deg) translateZ(120px); }
-  30% { transform: translate(100%, 20%) rotate(-15deg) translateZ(60px); }
-  45% { transform: translate(-90%, 50%) rotate(5deg) translateZ(140px); }
-  60% { transform: translate(70%, -60%) rotate(-8deg) translateZ(75px); }
-  75% { transform: translate(-60%, -20%) rotate(12deg) translateZ(100px); }
-  90% { transform: translate(50%, 40%) rotate(-6deg) translateZ(80px); }
-  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); }
+  0% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 10; }
+  15% { transform: translate(-80%, -70%) rotate(10deg) translateZ(120px); z-index: 5; }
+  30% { transform: translate(100%, 20%) rotate(-15deg) translateZ(60px); z-index: 1; }
+  45% { transform: translate(-90%, 50%) rotate(5deg) translateZ(140px); z-index: 8; }
+  60% { transform: translate(70%, -60%) rotate(-8deg) translateZ(75px); z-index: 3; }
+  75% { transform: translate(-60%, -20%) rotate(12deg) translateZ(100px); z-index: 7; }
+  90% { transform: translate(50%, 40%) rotate(-6deg) translateZ(80px); z-index: 4; }
+  100% { transform: translate(-50%, -50%) rotate(0) translateZ(0); z-index: 10; }
 }
 
-/* Animation classes */
-.card-6 { animation: shuffle6 4s ease-in-out; z-index: 6; }
-.card-7 { animation: shuffle7 4s ease-in-out; z-index: 7; }
-.card-8 { animation: shuffle8 4s ease-in-out; z-index: 8; }
-.card-9 { animation: shuffle9 4s ease-in-out; z-index: 9; }
-.card-10 { animation: shuffle10 4s ease-in-out; z-index: 10; }
+.card-1 { animation: shuffle1 4s ease-in-out; }
+.card-2 { animation: shuffle2 4s ease-in-out; }
+.card-3 { animation: shuffle3 4s ease-in-out; }
+.card-4 { animation: shuffle4 4s ease-in-out; }
+.card-5 { animation: shuffle5 4s ease-in-out; }
+.card-6 { animation: shuffle6 4s ease-in-out; }
+.card-7 { animation: shuffle7 4s ease-in-out; }
+.card-8 { animation: shuffle8 4s ease-in-out; }
+.card-9 { animation: shuffle9 4s ease-in-out; }
+.card-10 { animation: shuffle10 4s ease-in-out; }
 .shuffling-card-content {
   position: absolute;
   top: 0;
