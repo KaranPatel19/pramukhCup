@@ -70,15 +70,7 @@ export const TeamManagement: React.FC = () => {
     }
   }
 }, [teamsFromDb, players]);
-    useEffect(() => {
-    const enrichedTeams: Team[] = teamsFromDb.map(team => ({
-        ...team,
-        members: [], // add empty members array for local UI use
-    }));
-    setTeams(enrichedTeams);
-    }, [teamsFromDb]);
-
-
+    
   const createNewTeam = () => {
   if (!newTeamName.trim()) {
     setErrorMessage('Team name cannot be empty');
@@ -190,12 +182,11 @@ export const TeamManagement: React.FC = () => {
   });
 };
 // Helper function to get card background color based on player type
-const getPlayerCardBackground = (type: string) => {
-  switch (type.toLowerCase()) {
-    case 'goalkeeper': return 'linear-gradient(135deg, #e74c3c, #c0392b)';
-    case 'defender': return 'linear-gradient(135deg, #3498db, #2980b9)';
-    case 'midfielder': return 'linear-gradient(135deg, #2ecc71, #27ae60)';
-    case 'forward': return 'linear-gradient(135deg, #f1c40f, #f39c12)';
+const getPlayerCardBackground = (category: string) => {
+  switch (category.toLowerCase()) {
+    case 'batsmen': return 'linear-gradient(135deg, #e74c3c, #c0392b)';
+    case 'bowler': return 'linear-gradient(135deg, #3498db, #2980b9)';
+    case 'fielder': return 'linear-gradient(135deg, #2ecc71, #27ae60)';
     default: return 'linear-gradient(135deg, #9b59b6, #8e44ad)';
   }
 };
@@ -340,7 +331,7 @@ const removePlayerFromTeam = (playerId: string) => {
                     <tr>
                       <th>Name</th>
                       <th>Number</th>
-                      <th>Type</th>
+                      <th>Category</th>
                       <th>Captain</th>
                       <th>Actions</th>
                     </tr>
@@ -350,7 +341,7 @@ const removePlayerFromTeam = (playerId: string) => {
                       <tr key={member._id}>
                         <td>{member.name}</td>
                         <td>{member.number}</td>
-                        <td>{member.type}</td>
+                        <td>{member.category}</td>
                         <td>
                           <input
                             type="checkbox"
@@ -392,7 +383,7 @@ const removePlayerFromTeam = (playerId: string) => {
                 <tr>
                   <th>Name</th>
                   <th>Number</th>
-                  <th>Type</th>
+                  <th>Category</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -401,7 +392,7 @@ const removePlayerFromTeam = (playerId: string) => {
                   <tr key={player._id} className={highlightedPlayerId === player._id ? 'highlighted-row' : ''}>
                     <td>{player.name}</td>
                     <td>{player.number}</td>
-                    <td>{player.type}</td>
+                    <td>{player.category}</td>
                     <td>
                       <button 
                         onClick={() => addPlayerToTeam(player)}
@@ -435,13 +426,13 @@ const removePlayerFromTeam = (playerId: string) => {
                 key={player._id} 
                 className={`shuffling-card ${animationClass}`}
                 style={{ 
-                  background: getPlayerCardBackground(player.type),
+                  background: getPlayerCardBackground(player.category),
                   color: 'white'
                 }}
               >
                 <div className="shuffling-card-content">
                   <div className="shuffling-card-name">{player.name}</div>
-                  <div className="shuffling-card-type">{player.type}</div>
+                  <div className="shuffling-card-category">{player.category}</div>
                 </div>
               </div>
             );
