@@ -30,7 +30,7 @@ Meteor.methods({
       // Validate and insert each player
       for (const player of players) {
         // Ensure each player has the required fields
-        if (!player.name || player.number === undefined || !player.email || !player.type) {
+        if (!player.name || player.number === undefined || !player.email || !player.played || !player.category || player.batting === undefined || player.bowling === undefined || player.fielding === undefined) {
           continue; // Skip invalid entries
         }
 
@@ -39,8 +39,12 @@ Meteor.methods({
         name: player.name,
         number: Number(player.number),
         email: player.email,
-        type: player.type,
-        teamId: undefined, // You can replace `undefined` with an actual teamId if applicable
+        played: player.played,
+        category: player.category,
+        batting: Number(player.batting),
+        bowling: Number(player.bowling),
+        fielding: Number(player.fielding),
+        teamId: undefined,
         createdAt: new Date(),
       };
 
@@ -82,7 +86,11 @@ Meteor.methods({
     if (data.name) check(data.name, String);
     if (data.number !== undefined) check(data.number, Number);
     if (data.email) check(data.email, String);
-    if (data.type) check(data.type, String);
+    if (data.played) check(data.played, String);
+    if (data.category) check(data.category, String);
+    if (data.batting !== undefined) check(data.batting, Number);
+    if (data.bowling !== undefined) check(data.bowling, Number);
+    if (data.fielding !== undefined) check(data.fielding, Number);
 
     return PlayersCollection.updateAsync({ _id: playerId }, { $set: data });
   }

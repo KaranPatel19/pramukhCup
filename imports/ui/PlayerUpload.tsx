@@ -105,8 +105,11 @@ export const PlayerUpload: React.FC = () => {
                 <th>Name</th>
                 <th>Number</th>
                 <th>Email</th>
-                <th>Type</th>
-                <th>Actions</th>
+                <th>Played</th>
+                <th>Category</th>
+                <th>Batting</th>
+                <th>Bowling</th>
+                <th>Fielding</th>
               </tr>
             </thead>
             <tbody>
@@ -115,7 +118,11 @@ export const PlayerUpload: React.FC = () => {
                   <td>{player.name}</td>
                   <td>{player.number}</td>
                   <td>{player.email}</td>
-                  <td>{player.type}</td>
+                  <td>{player.played}</td>
+                  <td>{player.category}</td>
+                  <td>{player.batting}</td>
+                  <td>{player.bowling}</td>
+                  <td>{player.fielding}</td>
                   <td>
                     <button 
                       onClick={() => player._id && handleRemovePlayer(player._id)}

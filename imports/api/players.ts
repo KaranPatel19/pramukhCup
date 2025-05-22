@@ -5,7 +5,11 @@ export interface PlayerType {
   name: string;
   number: number;
   email: string;
-  type: string;
+  played: string;
+  category: string;
+  batting: number;
+  bowling: number;
+  fielding: number;
   teamId?: string;
   createdAt: Date;
 }
@@ -13,4 +17,4 @@ export interface PlayerType {
 // Collection for player data
 export const PlayersCollection = new Mongo.Collection<PlayerType>('players');
 
-// If you need to add schema validation 
+// If you need to add schema validation ca

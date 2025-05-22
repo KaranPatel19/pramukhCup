@@ -20,7 +20,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClose }) => {
     }
   };
 
-  const backgroundColor = getTypeColor(player.type);
+  const backgroundColor = getTypeColor(player.category);
 
   return (
     <div className="player-card-overlay" onClick={onClose}>
@@ -33,13 +33,21 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClose }) => {
             {player.name.substring(0, 1).toUpperCase()}
           </div>
           <div className="player-card-info">
-            <div className="player-card-type">
+            <div className="player-card-category">
               <span className="label">Type:</span>
-              <span className="value">{player.type}</span>
+              <span className="value">{player.category}</span>
             </div>
-            <div className="player-card-email">
-              <span className="label">Email:</span>
-              <span className="value">{player.email}</span>
+            <div className="player-card-batting">
+              <span className="label">Type:</span>
+              <span className="value">{player.batting}</span>
+            </div>
+            <div className="player-card-bowling">
+              <span className="label">Type:</span>
+              <span className="value">{player.bowling}</span>
+            </div>
+            <div className="player-card-fielding">
+              <span className="label">Type:</span>
+              <span className="value">{player.fielding}</span>
             </div>
           </div>
         </div>
