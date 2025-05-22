@@ -984,17 +984,3 @@ button:disabled {
 .shuffling-card::before {
   content: none;
 } 
-.shuffling-player-card {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-}
-
-.shuffling-player-card .player-card {
-  width: 220px;
-  height: 320px;
-  transform: none; /* Override any existing transforms */
-}
