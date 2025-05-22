@@ -12,10 +12,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClose }) => {
   // Generate random background color based on player type
   const getTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'goalkeeper': return '#e74c3c';
-      case 'defender': return '#3498db';
-      case 'midfielder': return '#2ecc71';
-      case 'forward': return '#f1c40f';
+      case 'Batsmen': return '#e74c3c';
+      case 'Bowler': return '#3498db';
+      case 'All-Rounder': return '#2ecc71';
       default: return '#9b59b6';
     }
   };
@@ -34,21 +33,27 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClose }) => {
           </div>
           <div className="player-card-info">
             <div className="player-card-category">
-              <span className="label">Type:</span>
+              <span className="label">Category:</span>
               <span className="value">{player.category}</span>
             </div>
-            <div className="player-card-batting">
-              <span className="label">Type:</span>
-              <span className="value">{player.batting}</span>
-            </div>
-            <div className="player-card-bowling">
-              <span className="label">Type:</span>
-              <span className="value">{player.bowling}</span>
-            </div>
-            <div className="player-card-fielding">
-              <span className="label">Type:</span>
-              <span className="value">{player.fielding}</span>
-            </div>
+           <div className="player-card-batting">
+            <span className="label">Batting:</span>
+            <span className="value">
+              {'★'.repeat(player.batting)}{'☆'.repeat(10 - player.batting)}
+            </span>
+          </div>
+          <div className="player-card-bowling">
+            <span className="label">Bowling:</span>
+            <span className="value">
+              {'★'.repeat(player.bowling)}{'☆'.repeat(10 - player.bowling)}
+            </span>
+          </div>
+          <div className="player-card-fielding">
+            <span className="label">Fielding:</span>
+            <span className="value">
+              {'★'.repeat(player.fielding)}{'☆'.repeat(10 - player.fielding)}
+            </span>
+          </div>
           </div>
         </div>
         <div className="player-card-footer">
