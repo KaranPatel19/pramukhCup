@@ -818,7 +818,7 @@ button:disabled {
   position: absolute;
   top: 30%;
   left: 44%;
-  width: 220px;
+  width: 300px;
   height: 320px;
   background: linear-gradient(135deg, #3498db, #2c3e50);
   border-radius: 15px;
@@ -840,8 +840,8 @@ button:disabled {
 }
 @keyframes shuffle1 {
   0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 1; }
-  10% { transform: translate(-80px, -20px) rotate(-10deg) translateZ(60px); z-index: 8; }
-  25% { transform: translate(60px, -40px) rotate(8deg) translateZ(40px); z-index: 3; }
+  10% { transform: translate(-120px, -30px) rotate(-10deg) translateZ(60px); z-index: 8; }
+  25% { transform: translate(100px, -60px) rotate(8deg) translateZ(40px); z-index: 3; }
   40% { transform: translate(-50px, 15px) rotate(-5deg) translateZ(80px); z-index: 10; }
   60% { transform: translate(40px, -25px) rotate(12deg) translateZ(50px); z-index: 5; }
   80% { transform: translate(-70px, -10px) rotate(-8deg) translateZ(30px); z-index: 7; }
