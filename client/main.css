@@ -803,7 +803,10 @@ button:disabled {
 #newtry
 /* Shuffling deck styles */
 .shuffling-deck {
-  position: relative;
+  position: absolute;
+  top: 30%;
+  left: 44%;
+  transform: translate(-50%, -50%);
   width: 100%;
   height: 400px;
   perspective: 1000px;
@@ -811,9 +814,10 @@ button:disabled {
   justify-content: center;
   align-items: center;
 }
-
 .shuffling-card {
   position: absolute;
+  top: 30%;
+  left: 44%;
   width: 220px;
   height: 320px;
   background: linear-gradient(135deg, #3498db, #2c3e50);
@@ -821,7 +825,7 @@ button:disabled {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
   transform-style: preserve-3d;
   backface-visibility: hidden;
-  /* Remove the initial transform, let animations handle positioning */
+  transform: translate(-50%, -50%);
 }
 
 .shuffling-card::before {
