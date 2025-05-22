@@ -186,7 +186,7 @@ const getPlayerCardBackground = (category: string) => {
   switch (category.toLowerCase()) {
     case 'batsmen': return 'linear-gradient(135deg, #e74c3c, #c0392b)';
     case 'bowler': return 'linear-gradient(135deg, #3498db, #2980b9)';
-    case 'fielder': return 'linear-gradient(135deg, #2ecc71, #27ae60)';
+    case 'all-rounder': return 'linear-gradient(135deg, #2ecc71, #27ae60)';
     default: return 'linear-gradient(135deg, #9b59b6, #8e44ad)';
   }
 };
