@@ -213,6 +213,8 @@ const removePlayerFromTeam = (playerId: string) => {
 
     setTeams(updatedTeams);
     setCurrentTeam(updatedTeam);
+    setSuccessMessage('Player removed from team');
+    setTimeout(() => setSuccessMessage(null), 3000);
   });
 };
 
@@ -242,12 +244,20 @@ const removePlayerFromTeam = (playerId: string) => {
 
   const deleteTeam = (teamId: string) => {
     if (window.confirm('Are you sure you want to delete this team?')) {
-      const updatedTeams = teams.filter(team => team._id !== teamId);
-      setTeams(updatedTeams);
-      
-      if (currentTeam && currentTeam._id === teamId) {
-        setCurrentTeam(null);
-      }
+      Meteor.call('teams.remove', teamId, (error: Error | null) => {
+        if (error) {
+          setErrorMessage(`Error deleting team: ${error.message}`);
+        } else {
+          const updatedTeams = teams.filter(team => team._id !== teamId);
+          setTeams(updatedTeams);
+          
+          if (currentTeam && currentTeam._id === teamId) {
+            setCurrentTeam(null);
+          }
+          setSuccessMessage('Team deleted successfully');
+          setTimeout(() => setSuccessMessage(null), 3000);
+        }
+      });
     }
   };
 
