@@ -4,6 +4,7 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { PlayersCollection, PlayerType } from '../api/players';
 import { TeamsCollection } from '../api/teams';
 import { PlayerCard } from './PlayerCard';
+import { TeamCustomization, TeamConfig } from './TeamCustomization';
 // Let's define interfaces for our team structure
 interface TeamMember extends PlayerType {
   isCaptain: boolean;
@@ -27,6 +28,12 @@ export const TeamManagement: React.FC = () => {
   const [isShuffling, setIsShuffling] = useState(false);
   const [shufflingCards, setShufflingCards] = useState<PlayerType[]>([]);
   const [selectedRandomPlayer, setSelectedRandomPlayer] = useState<PlayerType | null>(null);
+  const [showCustomization, setShowCustomization] = useState(false);
+  const [teamConfig, setTeamConfig] = useState<TeamConfig>({
+    highStars: { min: 22, count: 3 },
+    midStars: { min: 15, max: 22, count: 4 },
+    lowStars: { max: 15, count: 5 }
+  });
 
   const { players, isLoading } = useTracker(() => {
     const subscription = Meteor.subscribe('players');
@@ -111,21 +118,59 @@ export const TeamManagement: React.FC = () => {
     setErrorMessage(null);
   };
     
-  const chooseRandomPlayer = () => {
-  if (!currentTeam || availablePlayers.length === 0) return;
-
-  setChoosing(true);
-  setIsShuffling(true);
+  const calculatePlayerStars = (player: PlayerType): number => {
+    return player.batting + player.bowling + player.fielding;
+  };
   
-  // Display shuffling animation for 4 seconds
-  setTimeout(() => {
-    // After animation completes, select a random player
-    const randomPlayer = availablePlayers[Math.floor(Math.random() * availablePlayers.length)];
-    setIsShuffling(false);
-    setSelectedRandomPlayer(randomPlayer);
-    setChoosing(false);
-  }, 4000); // Changed from 2000 to 4000 for 4 seconds of animation
-};
+  const chooseRandomPlayer = () => {
+    if (!currentTeam || availablePlayers.length === 0) return;
+  
+    setChoosing(true);
+    setIsShuffling(true);
+    
+    // Display shuffling animation for 4 seconds
+    setTimeout(() => {
+      // Filter players based on team configuration needs
+      const currentMembers = currentTeam.members;
+      const highStarMembers = currentMembers.filter(m => calculatePlayerStars(m) >= teamConfig.highStars.min);
+      const midStarMembers = currentMembers.filter(m => 
+        calculatePlayerStars(m) >= teamConfig.midStars.min && 
+        calculatePlayerStars(m) <= teamConfig.midStars.max
+      );
+      const lowStarMembers = currentMembers.filter(m => calculatePlayerStars(m) < teamConfig.lowStars.max);
+  
+      let eligiblePlayers: PlayerType[] = [];
+  
+      // Determine which category we need players for
+      if (highStarMembers.length < teamConfig.highStars.count) {
+        eligiblePlayers = availablePlayers.filter(p => calculatePlayerStars(p) >= teamConfig.highStars.min);
+      } else if (midStarMembers.length < teamConfig.midStars.count) {
+        eligiblePlayers = availablePlayers.filter(p => 
+          calculatePlayerStars(p) >= teamConfig.midStars.min && 
+          calculatePlayerStars(p) <= teamConfig.midStars.max
+        );
+      } else if (lowStarMembers.length < teamConfig.lowStars.count) {
+        eligiblePlayers = availablePlayers.filter(p => calculatePlayerStars(p) < teamConfig.lowStars.max);
+      } else {
+        // If all quotas are filled, pick from all available players
+        eligiblePlayers = availablePlayers;
+      }
+  
+      // If no eligible players in the desired category, fall back to all available players
+      if (eligiblePlayers.length === 0) {
+        eligiblePlayers = availablePlayers;
+      }
+  
+      const randomPlayer = eligiblePlayers[Math.floor(Math.random() * eligiblePlayers.length)];
+      setIsShuffling(false);
+      setSelectedRandomPlayer(randomPlayer);
+      setChoosing(false);
+    }, 4000);
+  };
+  
+  const handleConfigSave = (newConfig: TeamConfig) => {
+    setTeamConfig(newConfig);
+  };
   const handleAddSelectedPlayer = () => {
     if (selectedRandomPlayer && currentTeam) {
       addPlayerToTeam(selectedRandomPlayer);
@@ -281,6 +326,14 @@ const removePlayerFromTeam = (playerId: string) => {
         </div>
       )}
 
+      <div className="team-controls">
+        <button 
+          className="btn-customize" 
+          onClick={() => setShowCustomization(true)}
+        >
+          ⚙️ Customize Team Composition
+        </button>
+      </div>
       <div className="team-management-container">
         {/* Team List Panel */}
         <div className="team-list-panel">
@@ -451,6 +504,12 @@ const removePlayerFromTeam = (playerId: string) => {
           onClose={handleAddSelectedPlayer} 
         />
       )}
+      <TeamCustomization
+        isOpen={showCustomization}
+        onClose={() => setShowCustomization(false)}
+        onSave={handleConfigSave}
+        currentConfig={teamConfig}
+      />
     </div>
   );
 };
