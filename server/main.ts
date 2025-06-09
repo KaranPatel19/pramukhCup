@@ -1,12 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { LinksCollection } from '/imports/api/links';
 import { PlayersCollection } from '/imports/api/players';
-import { TeamsCollection } from '/imports/api/teams';
 
 // Import methods to ensure they're registered
 import '/imports/api/methods/playerMethods';
-// Add this line alongside your other imports
-import '/imports/api/methods/teamsMethods';
 
 async function insertLink({ title, url }: { title: string; url: string }) {
   await LinksCollection.insertAsync({ title, url, createdAt: new Date() });
@@ -48,9 +45,6 @@ Meteor.startup(async () => {
     Meteor.publish("players", function () {
       return PlayersCollection.find();
     });
-    Meteor.publish("teams", function () {
-    return TeamsCollection.find();
-    }); 
   } catch (error) {
     console.error('Error during startup:', error);
   }

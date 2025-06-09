@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { PlayerUpload } from './PlayerUpload';
 import { DatabaseInspector } from './DatabaseInspector';
-import { TeamManagement } from './TeamManagement';
 import { ThemeProvider } from './ThemeContext';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -86,9 +85,7 @@ export const App: React.FC = () => {
           <PlayerUpload />
         )}
         
-        {activeTab === 'teams' && (
-          <TeamManagement />
-        )}
+        
         
         {activeTab === 'database' && (
           <DatabaseInspector />
