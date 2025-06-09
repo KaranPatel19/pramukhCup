@@ -30,23 +30,29 @@ Meteor.methods({
       // Validate and insert each player
       for (const player of players) {
         // Ensure each player has the required fields
-        if (!player.name || player.number === undefined || !player.email || !player.played || !player.category || player.batting === undefined || player.bowling === undefined || player.fielding === undefined) {
+        // Ensure each player has the required fields
+        if (!player['First Name'] || !player['Last Name'] || !player['Email'] || !player['Phone'] || !player['Age Group'] || !player['Player Type'] || player['Batting Skill'] === undefined || player['Bowling Skill'] === undefined || player['Fielding Skill'] === undefined) {
           continue; // Skip invalid entries
         }
 
         // Create a player object
         const newPlayer: Omit<PlayerType, '_id'> = {
-        name: player.name,
-        number: Number(player.number),
-        email: player.email,
-        played: player.played,
-        category: player.category,
-        batting: Number(player.batting),
-        bowling: Number(player.bowling),
-        fielding: Number(player.fielding),
-        teamId: undefined,
-        createdAt: new Date(),
-      };
+          firstName: player['First Name'],
+          lastName: player['Last Name'],
+          email: player['Email'],
+          phone: Number(player['Phone']),
+          ageGroup: player['Age Group'],
+          playerType: player['Player Type'],
+          tShirtSize: player['T-Shirt Size'] || '',
+          battingSkill: Number(player['Batting Skill']),
+          bowlingSkill: Number(player['Bowling Skill']),
+          fieldingSkill: Number(player['Fielding Skill']),
+          howMuchDoYouPlay: player['How Much Do You Play'] || '',
+          photo: player['Photo'] || '',
+          consent: player['Consent'] || '',
+          teamId: undefined,
+          createdAt: new Date(),
+        };
 
 
         // Insert the player
@@ -77,23 +83,28 @@ Meteor.methods({
   },
 
   /**
-   * Update player information
-   */
-  'players.update'(playerId: string, data: Partial<PlayerType>) {
-    check(playerId, String);
-    
-    // Validate fields
-    if (data.name) check(data.name, String);
-    if (data.number !== undefined) check(data.number, Number);
-    if (data.email) check(data.email, String);
-    if (data.played) check(data.played, String);
-    if (data.category) check(data.category, String);
-    if (data.batting !== undefined) check(data.batting, Number);
-    if (data.bowling !== undefined) check(data.bowling, Number);
-    if (data.fielding !== undefined) check(data.fielding, Number);
+ * Update player information
+ */
+'players.update'(playerId: string, data: Partial<PlayerType>) {
+  check(playerId, String);
+  
+  // Validate fields
+  if (data.firstName) check(data.firstName, String);
+  if (data.lastName) check(data.lastName, String);
+  if (data.email) check(data.email, String);
+  if (data.phone !== undefined) check(data.phone, Number);
+  if (data.ageGroup) check(data.ageGroup, String);
+  if (data.playerType) check(data.playerType, String);
+  if (data.tShirtSize) check(data.tShirtSize, String);
+  if (data.battingSkill !== undefined) check(data.battingSkill, Number);
+  if (data.bowlingSkill !== undefined) check(data.bowlingSkill, Number);
+  if (data.fieldingSkill !== undefined) check(data.fieldingSkill, Number);
+  if (data.howMuchDoYouPlay) check(data.howMuchDoYouPlay, String);
+  if (data.photo) check(data.photo, String);
+  if (data.consent) check(data.consent, String);
 
-    return PlayersCollection.updateAsync({ _id: playerId }, { $set: data });
-  }
+  return PlayersCollection.updateAsync({ _id: playerId }, { $set: data });
+}
 });
 
 // If we need to add the publication here

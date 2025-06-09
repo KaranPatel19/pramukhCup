@@ -2,14 +2,19 @@ import { Mongo } from 'meteor/mongo';
 
 export interface PlayerType {
   _id?: string;
-  name: string;
-  number: number;
+  firstName: string;
+  lastName: string;
   email: string;
-  played: string;
-  category: string;
-  batting: number;
-  bowling: number;
-  fielding: number;
+  phone: number;
+  ageGroup: string;
+  playerType: string;
+  tShirtSize: string;
+  battingSkill: number;
+  bowlingSkill: number;
+  fieldingSkill: number;
+  howMuchDoYouPlay: string;
+  photo: string;
+  consent: string;
   teamId?: string;
   createdAt: Date;
 }

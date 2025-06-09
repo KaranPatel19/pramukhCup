@@ -103,26 +103,30 @@ export const PlayerUpload: React.FC = () => {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Number</th>
                 <th>Email</th>
-                <th>Played</th>
-                <th>Category</th>
+                <th>Phone</th>
+                <th>Age Group</th>
+                <th>Player Type</th>
+                <th>T-Shirt Size</th>
                 <th>Batting</th>
                 <th>Bowling</th>
                 <th>Fielding</th>
+                <th>How Much Play</th>
               </tr>
             </thead>
             <tbody>
               {players.map((player: PlayerType) => (
                 <tr key={player._id}>
-                  <td>{player.name}</td>
-                  <td>{player.number}</td>
+                  <td>{`${player.firstName} ${player.lastName}`}</td>
                   <td>{player.email}</td>
-                  <td>{player.played}</td>
-                  <td>{player.category}</td>
-                  <td>{player.batting}</td>
-                  <td>{player.bowling}</td>
-                  <td>{player.fielding}</td>
+                  <td>{player.phone}</td>
+                  <td>{player.ageGroup}</td>
+                  <td>{player.playerType}</td>
+                  <td>{player.tShirtSize}</td>
+                  <td>{player.battingSkill}</td>
+                  <td>{player.bowlingSkill}</td>
+                  <td>{player.fieldingSkill}</td>
+                  <td>{player.howMuchDoYouPlay}</td>
                   <td>
                     <button 
                       onClick={() => player._id && handleRemovePlayer(player._id)}

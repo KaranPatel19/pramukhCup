@@ -12,49 +12,53 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClose }) => {
   // Generate random background color based on player type
   const getTypeColor = (type: string) => {
     switch (type.toLowerCase()) {
-      case 'Batsmen': return '#e74c3c';
-      case 'Bowler': return '#3498db';
-      case 'All-Rounder': return '#2ecc71';
+      case 'batsmen': return '#e74c3c';
+      case 'bowler': return '#3498db';
+      case 'all-rounder': return '#2ecc71';
+      case 'wicket-keeper': return '#f39c12';
       default: return '#9b59b6';
     }
   };
-
-  const backgroundColor = getTypeColor(player.category);
+  const backgroundColor = getTypeColor(player.playerType);
 
   return (
     <div className="player-card-overlay" onClick={onClose}>
       <div className="player-card" onClick={(e) => e.stopPropagation()}>
         <div className="player-card-header" style={{ backgroundColor }}>
-          <h2 className="player-card-name">{player.name}</h2>
+          <h2 className="player-card-name">{`${player.firstName} ${player.lastName}`}</h2>
         </div>
         <div className="player-card-body">
           <div className="player-card-avatar">
-            {player.name.substring(0, 1).toUpperCase()}
+          {player.firstName.substring(0, 1).toUpperCase()}
+        </div>
+        <div className="player-card-info">
+          <div className="player-card-category">
+            <span className="label">Type:</span>
+            <span className="value">{player.playerType}</span>
           </div>
-          <div className="player-card-info">
-            <div className="player-card-category">
-              <span className="label">Category:</span>
-              <span className="value">{player.category}</span>
-            </div>
-           <div className="player-card-batting">
+          <div className="player-card-age">
+            <span className="label">Age Group:</span>
+            <span className="value">{player.ageGroup}</span>
+          </div>
+          <div className="player-card-batting">
             <span className="label">Batting:</span>
             <span className="value">
-              {'★'.repeat(player.batting)}{'☆'.repeat(10 - player.batting)}
+              {'★'.repeat(player.battingSkill)}{'☆'.repeat(10 - player.battingSkill)}
             </span>
           </div>
           <div className="player-card-bowling">
             <span className="label">Bowling:</span>
             <span className="value">
-              {'★'.repeat(player.bowling)}{'☆'.repeat(10 - player.bowling)}
+              {'★'.repeat(player.bowlingSkill)}{'☆'.repeat(10 - player.bowlingSkill)}
             </span>
           </div>
           <div className="player-card-fielding">
             <span className="label">Fielding:</span>
             <span className="value">
-              {'★'.repeat(player.fielding)}{'☆'.repeat(10 - player.fielding)}
+              {'★'.repeat(player.fieldingSkill)}{'☆'.repeat(10 - player.fieldingSkill)}
             </span>
           </div>
-          </div>
+        </div>
         </div>
         <div className="player-card-footer">
           <button className="btn-add" onClick={onClose}>Add to Team</button>

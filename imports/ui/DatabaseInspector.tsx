@@ -44,7 +44,7 @@ export const DatabaseInspector: React.FC = () => {
                   {expandedPlayer === player._id ? '▼' : '►'}
                 </span>
                 <span className="db-record-id">{player._id}</span>
-                <span className="db-record-name">{player.name}</span>
+                <span className="db-record-name">{`${player.firstName} ${player.lastName}`}</span>
               </div>
               
               {expandedPlayer === player._id && (
