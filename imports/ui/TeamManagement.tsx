@@ -23,18 +23,9 @@ export const TeamManagement: React.FC = () => {
   const [newTeamName, setNewTeamName] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [choosing, setChoosing] = useState(false);
-  const [highlightedPlayerId, setHighlightedPlayerId] = useState<string | null>(null);
-  const [isShuffling, setIsShuffling] = useState(false);
-  const [shufflingCards, setShufflingCards] = useState<PlayerType[]>([]);
-  const [selectedRandomPlayer, setSelectedRandomPlayer] = useState<PlayerType | null>(null);
-  const [showCustomization, setShowCustomization] = useState(false);
-  const [teamConfig, setTeamConfig] = useState<TeamConfig>({
-    highStars: { min: 22, count: 3 },
-    midStars: { min: 15, max: 22, count: 4 },
-    lowStars: { max: 15, count: 5 }
-  });
-
+  const [showPlayerCards, setShowPlayerCards] = useState(false);
+  const [selectedPlayerForAssignment, setSelectedPlayerForAssignment] = useState<PlayerType | null>(null);
+  const [cardsAnimating, setCardsAnimating] = useState(false);
   const { players, isLoading } = useTracker(() => {
     const subscription = Meteor.subscribe('players');
     return {
@@ -121,62 +112,6 @@ export const TeamManagement: React.FC = () => {
   const calculatePlayerStars = (player: PlayerType): number => {
     return player.batting + player.bowling + player.fielding;
   };
-  
-  const chooseRandomPlayer = () => {
-    if (!currentTeam || availablePlayers.length === 0) return;
-  
-    setChoosing(true);
-    setIsShuffling(true);
-    
-    // Display shuffling animation for 4 seconds
-    setTimeout(() => {
-      // Filter players based on team configuration needs
-      const currentMembers = currentTeam.members;
-      const highStarMembers = currentMembers.filter(m => calculatePlayerStars(m) >= teamConfig.highStars.min);
-      const midStarMembers = currentMembers.filter(m => 
-        calculatePlayerStars(m) >= teamConfig.midStars.min && 
-        calculatePlayerStars(m) <= teamConfig.midStars.max
-      );
-      const lowStarMembers = currentMembers.filter(m => calculatePlayerStars(m) < teamConfig.lowStars.max);
-  
-      let eligiblePlayers: PlayerType[] = [];
-  
-      // Determine which category we need players for
-      if (highStarMembers.length < teamConfig.highStars.count) {
-        eligiblePlayers = availablePlayers.filter(p => calculatePlayerStars(p) >= teamConfig.highStars.min);
-      } else if (midStarMembers.length < teamConfig.midStars.count) {
-        eligiblePlayers = availablePlayers.filter(p => 
-          calculatePlayerStars(p) >= teamConfig.midStars.min && 
-          calculatePlayerStars(p) <= teamConfig.midStars.max
-        );
-      } else if (lowStarMembers.length < teamConfig.lowStars.count) {
-        eligiblePlayers = availablePlayers.filter(p => calculatePlayerStars(p) < teamConfig.lowStars.max);
-      } else {
-        // If all quotas are filled, pick from all available players
-        eligiblePlayers = availablePlayers;
-      }
-  
-      // If no eligible players in the desired category, fall back to all available players
-      if (eligiblePlayers.length === 0) {
-        eligiblePlayers = availablePlayers;
-      }
-  
-      const randomPlayer = eligiblePlayers[Math.floor(Math.random() * eligiblePlayers.length)];
-      setIsShuffling(false);
-      setSelectedRandomPlayer(randomPlayer);
-      setChoosing(false);
-    }, 4000);
-  };
-  
-  const handleConfigSave = (newConfig: TeamConfig) => {
-    setTeamConfig(newConfig);
-  };
-  const handleAddSelectedPlayer = () => {
-    if (selectedRandomPlayer && currentTeam) {
-      addPlayerToTeam(selectedRandomPlayer);
-      setSelectedRandomPlayer(null);
-    }
-  };
 
 
   const addPlayerToTeam = (player: PlayerType) => {
@@ -217,8 +152,7 @@ export const TeamManagement: React.FC = () => {
     setTeams(updatedTeams);
     setCurrentTeam(updatedTeam);
     setSuccessMessage(`${player.name} added to ${currentTeam.name}`);
-    setErrorMessage(null);
-    setSelectedRandomPlayer(null); // Close the player card after adding
+    setErrorMessage(null); // Close the player card after adding
 
     // Clear success message after 3 seconds
     setTimeout(() => {
@@ -227,14 +161,6 @@ export const TeamManagement: React.FC = () => {
   });
 };
 // Helper function to get card background color based on player type
-const getPlayerCardBackground = (category: string) => {
-  switch (category.toLowerCase()) {
-    case 'batsmen': return 'linear-gradient(135deg, #e74c3c, #c0392b)';
-    case 'bowler': return 'linear-gradient(135deg, #3498db, #2980b9)';
-    case 'all-rounder': return 'linear-gradient(135deg, #2ecc71, #27ae60)';
-    default: return 'linear-gradient(135deg, #9b59b6, #8e44ad)';
-  }
-};
 const removePlayerFromTeam = (playerId: string) => {
   if (!currentTeam) return;
 
@@ -325,15 +251,6 @@ const removePlayerFromTeam = (playerId: string) => {
           {successMessage}
         </div>
       )}
-
-      <div className="team-controls">
-        <button 
-          className="btn-customize" 
-          onClick={() => setShowCustomization(true)}
-        >
-          ⚙️ Customize Team Composition
-        </button>
-      </div>
       <div className="team-management-container">
         {/* Team List Panel */}
         <div className="team-list-panel">
@@ -377,11 +294,16 @@ const removePlayerFromTeam = (playerId: string) => {
           )}
         </div>
         <button 
-        onClick={chooseRandomPlayer} 
+        onClick={() => {
+          setCardsAnimating(true);
+          setShowPlayerCards(true);
+          // Reset animation state after cards finish animating
+          setTimeout(() => setCardsAnimating(false), 1500);
+        }}
         className="btn-choose" 
-        disabled={!currentTeam || availablePlayers.length === 0 || choosing}
+        disabled={availablePlayers.length === 0}
         >
-        Choose Random Player
+        Show Player Cards ({availablePlayers.length})
         </button>
         {/* Team Detail Panel */}
         <div className="team-detail-panel">
@@ -452,7 +374,7 @@ const removePlayerFromTeam = (playerId: string) => {
               </thead>
               <tbody>
                 {availablePlayers.map(player => (
-                  <tr key={player._id} className={highlightedPlayerId === player._id ? 'highlighted-row' : ''}>
+                  <tr key={player._id}>
                     <td>{player.name}</td>
                     <td>{player.number}</td>
                     <td>{player.category}</td>
@@ -478,38 +400,72 @@ const removePlayerFromTeam = (playerId: string) => {
           )}
         </div>
       </div>
-      {isShuffling && (
-        <div className="player-card-overlay">
-          <div className="shuffling-deck">
-            {availablePlayers.map((player, index) => {
-              const animationClass = `card-${(index % 10) + 1}`;
-              return (
-                <div 
-                  key={player._id} 
-                  className={`shuffling-card ${animationClass}`}
-                >
-                  <PlayerCard 
-                    player={player} 
-                    onClose={() => { /* noop during shuffle */ }} 
-                  />
+      {showPlayerCards && (
+      <div className="player-card-overlay" onClick={() => setShowPlayerCards(false)}>
+        <div className="cards-grid" onClick={(e) => e.stopPropagation()}>
+          <div className="cards-header">
+            <h3>Select a Player to Assign</h3>
+            <button className="close-btn" onClick={() => setShowPlayerCards(false)}>×</button>
+          </div>
+          <div className="cards-container">
+            {availablePlayers.slice(0, 10).map((player, index) => (
+              <div 
+                key={player._id} 
+                className={`mini-player-card card-${index + 1}`}
+                style={{ animationDelay: `${index * 0.1}s` }}
+                onClick={() => {
+                  setSelectedPlayerForAssignment(player);
+                  setShowPlayerCards(false);
+                }}
+              >
+                <div className="mini-card-header" style={{ 
+                  background: player.category === 'Batsmen' ? '#e74c3c' : 
+                            player.category === 'Bowler' ? '#3498db' : 
+                            player.category === 'All-Rounder' ? '#2ecc71' : '#9b59b6'
+                }}>
+                  <span className="mini-card-name">{player.name}</span>
                 </div>
-              );
-            })}
+                <div className="mini-card-body">
+                  <div className="mini-card-category">{player.category}</div>
+                  <div className="mini-card-stats">
+                    <div>Bat: {'★'.repeat(player.batting)}</div>
+                    <div>Bowl: {'★'.repeat(player.bowling)}</div>
+                    <div>Field: {'★'.repeat(player.fielding)}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      )}
-      {selectedRandomPlayer && (
-        <PlayerCard 
-          player={selectedRandomPlayer} 
-          onClose={handleAddSelectedPlayer} 
-        />
-      )}
-      <TeamCustomization
-        isOpen={showCustomization}
-        onClose={() => setShowCustomization(false)}
-        onSave={handleConfigSave}
-        currentConfig={teamConfig}
-      />
+      </div>
+    )}
+
+    {selectedPlayerForAssignment && (
+      <div className="player-card-overlay" onClick={() => setSelectedPlayerForAssignment(null)}>
+        <div className="team-assignment-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="assignment-header">
+            <h3>Assign {selectedPlayerForAssignment.name} to Team</h3>
+            <button className="close-btn" onClick={() => setSelectedPlayerForAssignment(null)}>×</button>
+          </div>
+          <div className="teams-selection">
+            {teams.map(team => (
+              <div 
+                key={team._id} 
+                className="team-option" 
+                onClick={() => {
+                  setCurrentTeam(team);
+                  addPlayerToTeam(selectedPlayerForAssignment);
+                  setSelectedPlayerForAssignment(null);
+                }}
+              >
+                <div className="team-option-name">{team.name}</div>
+                <div className="team-option-count">{team.members.length} players</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };

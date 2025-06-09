@@ -789,207 +789,11 @@ button:disabled {
   background-color: #222;
   border-top-color: #333;
 }
-@keyframes shuffleCards {
-  0% { transform: translateX(0) rotate(0); opacity: 0.5; }
-  25% { transform: translateX(-100px) rotate(-10deg); opacity: 0.7; }
-  50% { transform: translateX(100px) rotate(10deg); opacity: 0.9; }
-  75% { transform: translateX(-50px) rotate(-5deg); opacity: 0.7; }
-  100% { transform: translateX(0) rotate(0); opacity: 1; }
-}
 
 .shuffle-animation {
   animation: shuffleCards 0.4s ease-in-out infinite;
 }
 #newtry
-/* Shuffling deck styles */
-.shuffling-deck {
-  position: absolute;
-  top: 30%;
-  left: 44%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 400px;
-  perspective: 1000px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.shuffling-card {
-  position: absolute;
-  top: 30%;
-  left: 44%;
-  width: 300px;
-  height: 320px;
-  background: linear-gradient(135deg, #3498db, #2c3e50);
-  border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  transform: translate(-50%, -50%);
-}
-
-.shuffling-card::before {
-  content: '?';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 80px;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: bold;
-}
-@keyframes shuffle1 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 1; }
-  10% { transform: translate(-120px, -30px) rotate(-10deg) translateZ(60px); z-index: 8; }
-  25% { transform: translate(100px, -60px) rotate(8deg) translateZ(40px); z-index: 3; }
-  40% { transform: translate(-50px, 15px) rotate(-5deg) translateZ(80px); z-index: 10; }
-  60% { transform: translate(40px, -25px) rotate(12deg) translateZ(50px); z-index: 5; }
-  80% { transform: translate(-70px, -10px) rotate(-8deg) translateZ(30px); z-index: 7; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 1; }
-}
-
-@keyframes shuffle2 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 2; }
-  15% { transform: translate(50px, 20px) rotate(12deg) translateZ(50px); z-index: 6; }
-  30% { transform: translate(-60px, -15px) rotate(-6deg) translateZ(70px); z-index: 9; }
-  45% { transform: translate(30px, 25px) rotate(4deg) translateZ(40px); z-index: 4; }
-  65% { transform: translate(-45px, -30px) rotate(-15deg) translateZ(60px); z-index: 1; }
-  85% { transform: translate(55px, 8px) rotate(8deg) translateZ(35px); z-index: 8; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 2; }
-}
-
-@keyframes shuffle3 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 3; }
-  12% { transform: translate(-40px, 30px) rotate(10deg) translateZ(65px); z-index: 10; }
-  28% { transform: translate(70px, -8px) rotate(-10deg) translateZ(45px); z-index: 2; }
-  42% { transform: translate(-25px, -40px) rotate(6deg) translateZ(75px); z-index: 7; }
-  62% { transform: translate(15px, 25px) rotate(-12deg) translateZ(35px); z-index: 4; }
-  82% { transform: translate(-60px, -20px) rotate(4deg) translateZ(55px); z-index: 9; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 3; }
-}
-
-@keyframes shuffle4 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 4; }
-  18% { transform: translate(35px, -35px) rotate(-8deg) translateZ(60px); z-index: 7; }
-  32% { transform: translate(-75px, 12px) rotate(12deg) translateZ(40px); z-index: 1; }
-  48% { transform: translate(45px, 20px) rotate(-4deg) translateZ(70px); z-index: 10; }
-  68% { transform: translate(-20px, -25px) rotate(8deg) translateZ(50px); z-index: 3; }
-  88% { transform: translate(65px, -15px) rotate(-6deg) translateZ(30px); z-index: 6; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 4; }
-}
-
-@keyframes shuffle5 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 5; }
-  20% { transform: translate(-55px, -25px) rotate(-6deg) translateZ(55px); z-index: 2; }
-  35% { transform: translate(40px, 35px) rotate(10deg) translateZ(35px); z-index: 8; }
-  50% { transform: translate(-65px, -5px) rotate(-8deg) translateZ(65px); z-index: 9; }
-  70% { transform: translate(25px, -35px) rotate(4deg) translateZ(45px); z-index: 1; }
-  90% { transform: translate(-35px, 20px) rotate(-12deg) translateZ(25px); z-index: 6; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 5; }
-}
-
-@keyframes shuffle6 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 6; }
-  15% { transform: translate(-70px, 25px) rotate(12deg) translateZ(60px); z-index: 4; }
-  35% { transform: translate(50px, -8px) rotate(-10deg) translateZ(45px); z-index: 9; }
-  55% { transform: translate(-25px, -35px) rotate(6deg) translateZ(75px); z-index: 2; }
-  75% { transform: translate(40px, 25px) rotate(-12deg) translateZ(35px); z-index: 10; }
-  95% { transform: translate(-50px, -20px) rotate(4deg) translateZ(55px); z-index: 3; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 6; }
-}
-
-@keyframes shuffle7 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 7; }
-  20% { transform: translate(45px, -30px) rotate(-12deg) translateZ(70px); z-index: 1; }
-  40% { transform: translate(-60px, 15px) rotate(8deg) translateZ(50px); z-index: 5; }
-  60% { transform: translate(30px, -20px) rotate(-6deg) translateZ(80px); z-index: 10; }
-  80% { transform: translate(-45px, 8px) rotate(10deg) translateZ(40px); z-index: 4; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 7; }
-}
-
-@keyframes shuffle8 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 8; }
-  25% { transform: translate(-25px, 40px) rotate(15deg) translateZ(55px); z-index: 3; }
-  50% { transform: translate(55px, -12px) rotate(-12deg) translateZ(65px); z-index: 9; }
-  75% { transform: translate(-40px, -20px) rotate(7deg) translateZ(45px); z-index: 1; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 8; }
-}
-
-@keyframes shuffle9 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 9; }
-  30% { transform: translate(40px, 35px) rotate(-15deg) translateZ(75px); z-index: 6; }
-  60% { transform: translate(-75px, -25px) rotate(12deg) translateZ(50px); z-index: 2; }
-  90% { transform: translate(25px, 8px) rotate(-8deg) translateZ(60px); z-index: 8; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 9; }
-}
-
-@keyframes shuffle10 {
-  0% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 10; }
-  15% { transform: translate(-50px, -40px) rotate(8deg) translateZ(70px); z-index: 5; }
-  30% { transform: translate(60px, 12px) rotate(-12deg) translateZ(40px); z-index: 1; }
-  45% { transform: translate(-55px, 30px) rotate(4deg) translateZ(80px); z-index: 8; }
-  60% { transform: translate(45px, -35px) rotate(-6deg) translateZ(50px); z-index: 3; }
-  75% { transform: translate(-40px, -15px) rotate(10deg) translateZ(60px); z-index: 7; }
-  90% { transform: translate(35px, 25px) rotate(-4deg) translateZ(45px); z-index: 4; }
-  100% { transform: translate(0, 0) rotate(0) translateZ(0); z-index: 10; }
-}
-
-.card-1 { animation: shuffle1 4s ease-in-out; }
-.card-2 { animation: shuffle2 4s ease-in-out; }
-.card-3 { animation: shuffle3 4s ease-in-out; }
-.card-4 { animation: shuffle4 4s ease-in-out; }
-.card-5 { animation: shuffle5 4s ease-in-out; }
-.card-6 { animation: shuffle6 4s ease-in-out; }
-.card-7 { animation: shuffle7 4s ease-in-out; }
-.card-8 { animation: shuffle8 4s ease-in-out; }
-.card-9 { animation: shuffle9 4s ease-in-out; }
-.card-10 { animation: shuffle10 4s ease-in-out; }
-.shuffling-card-content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  padding: 15px;
-}
-
-.shuffling-card-number {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.shuffling-card-name {
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-
-.shuffling-card-category {
-  font-size: 16px;
-  text-align: center;
-}
-
-/* Remove the ::before content from shuffling-card since we now have actual content */
-.shuffling-card::before {
-  content: none;
-} 
-/* Team Customization Styles */
-.team-controls {
-  margin-bottom: 20px;
-  text-align: center;
-}
-
 .btn-customize {
   background-color: #f39c12;
   color: white;
@@ -1170,4 +974,221 @@ button:disabled {
 
 .dark-mode .btn-customize:hover {
   background-color: #e67e22;
+}
+.cards-grid {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 1000px;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease-out;
+}
+
+.cards-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  padding: 20px;
+  perspective: 1000px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.mini-player-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: separateCards 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateX(0) translateY(0) translateZ(0) rotateY(0deg);
+}
+
+.mini-player-card.card-1 { animation-delay: 0s; }
+.mini-player-card.card-2 { animation-delay: 0.1s; }
+.mini-player-card.card-3 { animation-delay: 0.2s; }
+.mini-player-card.card-4 { animation-delay: 0.3s; }
+.mini-player-card.card-5 { animation-delay: 0.4s; }
+.mini-player-card.card-6 { animation-delay: 0.5s; }
+.mini-player-card.card-7 { animation-delay: 0.6s; }
+.mini-player-card.card-8 { animation-delay: 0.7s; }
+.mini-player-card.card-9 { animation-delay: 0.8s; }
+.mini-player-card.card-10 { animation-delay: 0.9s; }
+
+@keyframes separateCards {
+  0% {
+    opacity: 0;
+    transform: translateX(0) translateY(0) translateZ(-50px) rotateY(15deg);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateX(0) translateY(-10px) translateZ(0) rotateY(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) translateZ(0) rotateY(0deg);
+  }
+}
+.mini-player-card:hover {
+  transform: translateY(-5px) rotateY(2deg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.mini-card-header {
+  padding: 10px;
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.mini-card-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+.mini-card-name {
+  font-weight: bold;
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+}
+.mini-card-body {
+  padding: 10px;
+  background: white;
+}
+
+/* Dark mode support for cards */
+.dark-mode .mini-player-card {
+  background-color: #2d2d2d;
+  border-color: #444;
+}
+
+.dark-mode .mini-card-body {
+  background-color: #2d2d2d;
+}
+
+.dark-mode .mini-card-category {
+  color: #aaa;
+}
+
+.dark-mode .mini-card-stats div {
+  color: #ddd;
+}
+
+.dark-mode .cards-grid {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+.mini-card-category {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.mini-card-stats div {
+  font-size: 11px;
+  margin-bottom: 2px;
+  color: #333;
+}
+
+.team-assignment-modal {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+}
+
+.assignment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.teams-selection {
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.team-option {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.team-option:hover {
+  background-color: #f5f5f5;
+}
+
+.team-option-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.team-option-count {
+  font-size: 12px;
+  color: #666;
+}
+/* Initial shuffle before separation */
+@keyframes cardShuffle {
+  0% {
+    transform: translateX(0) translateY(0) rotateZ(0deg);
+    opacity: 0;
+  }
+  25% {
+    transform: translateX(-20px) translateY(-10px) rotateZ(-5deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(20px) translateY(10px) rotateZ(5deg);
+    opacity: 0.6;
+  }
+  75% {
+    transform: translateX(-10px) translateY(-5px) rotateZ(-2deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotateZ(0deg);
+    opacity: 1;
+  }
+}
+
+/* Apply shuffle before separation */
+.mini-player-card {
+  animation: cardShuffle 0.5s ease-out forwards, separateCards 0.8s ease-out 0.5s forwards;
 }
