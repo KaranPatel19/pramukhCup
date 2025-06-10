@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import { TeamsCollection, TeamType } from 'api/teams';
-import { PlayersCollection } from 'api/players';
+import { TeamsCollection, TeamType } from '../api/teams';
+import { PlayersCollection } from '../api/players';
 
 Meteor.methods({
   /**

@@ -62,22 +62,22 @@ export const TeamManagement: React.FC = () => {
 
   // Subscribe to teams and players data
   const { teams, players, availablePlayers, selectedTeam, isLoading } = useTracker(() => {
-    const teamsSubscription = Meteor.subscribe('teams');
-    const playersSubscription = Meteor.subscribe('players');
-    
-    const allTeams = TeamsCollection.find({}, { sort: { createdAt: 1 } }).fetch();
-    const allPlayers = PlayersCollection.find({}, { sort: { firstName: 1 } }).fetch();
-    const currentSelectedTeam = selectedTeamId ? TeamsCollection.findOne({ _id: selectedTeamId }) : null;
-    const playersWithoutTeam = PlayersCollection.find({ teamId: { $exists: false } }, { sort: { firstName: 1 } }).fetch();
+  const teamsSubscription = Meteor.subscribe('teams');
+  const playersSubscription = Meteor.subscribe('players');
+  
+  const allTeams = TeamsCollection.find({}, { sort: { createdAt: 1 } }).fetch() || [];
+  const allPlayers = PlayersCollection.find({}, { sort: { firstName: 1 } }).fetch() || [];
+  const currentSelectedTeam = selectedTeamId ? TeamsCollection.findOne({ _id: selectedTeamId }) : null;
+  const playersWithoutTeam = PlayersCollection.find({ teamId: { $exists: false } }, { sort: { firstName: 1 } }).fetch() || [];
 
-    return {
-      teams: allTeams,
-      players: allPlayers,
-      availablePlayers: playersWithoutTeam,
-      selectedTeam: currentSelectedTeam,
-      isLoading: !teamsSubscription.ready() || !playersSubscription.ready(),
-    };
-  });
+  return {
+    teams: allTeams || [],
+    players: allPlayers || [],
+    availablePlayers: playersWithoutTeam || [],
+    selectedTeam: currentSelectedTeam,
+    isLoading: !teamsSubscription.ready() || !playersSubscription.ready(),
+  };
+});
 
   const showMessage = (msg: string, type: 'success' | 'error') => {
     setMessage(msg);
@@ -154,8 +154,9 @@ export const TeamManagement: React.FC = () => {
   };
 
   const getTeamMembers = (team: TeamType): PlayerType[] => {
+    if (!team.memberIds || !players) return [];
     return team.memberIds.map(id => players.find(p => p._id === id)).filter(Boolean) as PlayerType[];
-  };
+    };
 
   const getCaptain = (team: TeamType): PlayerType | undefined => {
     return team.captainId ? players.find(p => p._id === team.captainId) : undefined;
@@ -193,7 +194,7 @@ export const TeamManagement: React.FC = () => {
         </div>
 
         <ul className="teams-list">
-          {teams.map((team: TeamType) => (
+          {teams && teams.length > 0 ? teams.map((team: TeamType) => (
             <li 
               key={team._id} 
               className={selectedTeamId === team._id ? 'selected' : ''}
@@ -215,10 +216,10 @@ export const TeamManagement: React.FC = () => {
                 ×
               </button>
             </li>
-          ))}
+          )) : null}
         </ul>
 
-        {teams.length === 0 && (
+        {teams && teams.length === 0 && (
           <div className="no-data">No teams created yet.</div>
         )}
       </div>
@@ -304,7 +305,7 @@ export const TeamManagement: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {availablePlayers.map((player: PlayerType) => (
+              {availablePlayers && availablePlayers.map((player: PlayerType) => (
                 <tr key={player._id}>
                   <td>{`${player.firstName} ${player.lastName}`}</td>
                   <td>{player.playerType}</td>
