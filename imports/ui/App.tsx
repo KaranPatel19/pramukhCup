@@ -3,6 +3,7 @@ import { PlayerUpload } from './PlayerUpload';
 import { DatabaseInspector } from './DatabaseInspector';
 import { ThemeProvider } from './ThemeContext';
 import { ThemeToggle } from './ThemeToggle';
+import { TeamManagement } from './TeamManagement';
 
 export const App: React.FC = () => {
   const [showPlayerUpload, setShowPlayerUpload] = useState<boolean>(false);
@@ -85,6 +86,9 @@ export const App: React.FC = () => {
           <PlayerUpload />
         )}
         
+        {activeTab === 'teams' && (
+          <TeamManagement />
+        )}
         
         
         {activeTab === 'database' && (

@@ -3,7 +3,8 @@ import { LinksCollection } from '/imports/api/links';
 import { PlayersCollection } from '/imports/api/players';
 
 // Import methods to ensure they're registered
-import '/imports/api/methods/playerMethods';
+import '../imports/methods/playerMethods';
+import '../imports/methods/teamMethods';
 
 async function insertLink({ title, url }: { title: string; url: string }) {
   await LinksCollection.insertAsync({ title, url, createdAt: new Date() });

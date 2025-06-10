@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { check } from 'meteor/check';
-import { PlayersCollection, PlayerType } from '../players';
+import { PlayersCollection, PlayerType } from '../api/players';
 import Papa from 'papaparse';
 
 Meteor.methods({
