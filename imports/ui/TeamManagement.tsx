@@ -65,17 +65,29 @@ export const TeamManagement: React.FC = () => {
   const teamsSubscription = Meteor.subscribe('teams');
   const playersSubscription = Meteor.subscribe('players');
   
-  const allTeams = TeamsCollection.find({}, { sort: { createdAt: 1 } }).fetch() || [];
-  const allPlayers = PlayersCollection.find({}, { sort: { firstName: 1 } }).fetch() || [];
+  const subscriptionsReady = teamsSubscription.ready() && playersSubscription.ready();
+  
+  if (!subscriptionsReady) {
+    return {
+      teams: [],
+      players: [],
+      availablePlayers: [],
+      selectedTeam: null,
+      isLoading: true,
+    };
+  }
+  
+  const allTeams = TeamsCollection.find({}, { sort: { createdAt: 1 } }).fetch();
+  const allPlayers = PlayersCollection.find({}, { sort: { firstName: 1 } }).fetch();
   const currentSelectedTeam = selectedTeamId ? TeamsCollection.findOne({ _id: selectedTeamId }) : null;
-  const playersWithoutTeam = PlayersCollection.find({ teamId: { $exists: false } }, { sort: { firstName: 1 } }).fetch() || [];
+  const playersWithoutTeam = PlayersCollection.find({ teamId: { $exists: false } }, { sort: { firstName: 1 } }).fetch();
 
   return {
     teams: allTeams || [],
     players: allPlayers || [],
     availablePlayers: playersWithoutTeam || [],
     selectedTeam: currentSelectedTeam,
-    isLoading: !teamsSubscription.ready() || !playersSubscription.ready(),
+    isLoading: false,
   };
 });
 
@@ -154,9 +166,9 @@ export const TeamManagement: React.FC = () => {
   };
 
   const getTeamMembers = (team: TeamType): PlayerType[] => {
-    if (!team.memberIds || !players) return [];
-    return team.memberIds.map(id => players.find(p => p._id === id)).filter(Boolean) as PlayerType[];
-    };
+  if (!team.memberIds || !players || players.length === 0) return [];
+  return team.memberIds.map(id => players.find(p => p._id === id)).filter(Boolean) as PlayerType[];
+};
 
   const getCaptain = (team: TeamType): PlayerType | undefined => {
     return team.captainId ? players.find(p => p._id === team.captainId) : undefined;
@@ -171,7 +183,7 @@ export const TeamManagement: React.FC = () => {
     <style>{teamManagementStyles}</style>
     <div className="team-management-container">
       {message && (
-        <div className={`${messageType === 'success' ? 'success-message' : 'error-message'}`}>
+         <div className={`${messageType === 'success' ? 'success-message' : 'error-message'}`} style={{ gridColumn: '1 / -1' }}>
           {message}
         </div>
       )}
@@ -203,7 +215,7 @@ export const TeamManagement: React.FC = () => {
               <div className="team-info">
                 <span className="team-name">{team.name}</span>
                 <span className="team-members-count">
-                  {team.memberIds.length} member{team.memberIds.length !== 1 ? 's' : ''}
+                 {(team.memberIds || []).length} member{(team.memberIds || []).length !== 1 ? 's' : ''}
                 </span>
               </div>
               <button 
@@ -236,9 +248,10 @@ export const TeamManagement: React.FC = () => {
               </div>
             )}
 
-            <h4>Team Members ({selectedTeam.memberIds.length})</h4>
-            
-            {selectedTeam.memberIds.length > 0 ? (
+            <h4>Team Members ({(selectedTeam.memberIds || []).length})</h4>
+
+            {(selectedTeam.memberIds || []).length > 0 ? (
+
               <table className="team-members-table">
                 <thead>
                   <tr>

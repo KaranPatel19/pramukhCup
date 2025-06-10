@@ -7,27 +7,27 @@ Meteor.methods({
   /**
    * Create a new team
    */
-  'teams.create'(name: string) {
+    async 'teams.create'(name: string) {
     check(name, String);
     
     if (!name.trim()) {
-      throw new Meteor.Error('invalid-name', 'Team name cannot be empty');
+        throw new Meteor.Error('invalid-name', 'Team name cannot be empty');
     }
 
     // Check if team name already exists
-    const existingTeam = TeamsCollection.findOne({ name: name.trim() });
+    const existingTeam = await TeamsCollection.findOneAsync({ name: name.trim() });
     if (existingTeam) {
-      throw new Meteor.Error('duplicate-name', 'Team name already exists');
+        throw new Meteor.Error('duplicate-name', 'Team name already exists');
     }
 
     const newTeam: Omit<TeamType, '_id'> = {
-      name: name.trim(),
-      memberIds: [],
-      createdAt: new Date(),
+        name: name.trim(),
+        memberIds: [],
+        createdAt: new Date(),
     };
 
-    return TeamsCollection.insertAsync(newTeam);
-  },
+    return await TeamsCollection.insertAsync(newTeam);
+    },
 
   /**
    * Delete a team
@@ -48,35 +48,35 @@ Meteor.methods({
   /**
    * Add player to team
    */
-  'teams.addPlayer'(teamId: string, playerId: string) {
+    async 'teams.addPlayer'(teamId: string, playerId: string) {
     check(teamId, String);
     check(playerId, String);
 
-    const team = TeamsCollection.findOne({ _id: teamId });
-    const player = PlayersCollection.findOne({ _id: playerId });
+    const team = await TeamsCollection.findOneAsync({ _id: teamId });
+    const player = await PlayersCollection.findOneAsync({ _id: playerId });
 
     if (!team) {
-      throw new Meteor.Error('team-not-found', 'Team not found');
+        throw new Meteor.Error('team-not-found', 'Team not found');
     }
     if (!player) {
-      throw new Meteor.Error('player-not-found', 'Player not found');
+        throw new Meteor.Error('player-not-found', 'Player not found');
     }
     if (player.teamId) {
-      throw new Meteor.Error('player-already-assigned', 'Player is already assigned to a team');
+        throw new Meteor.Error('player-already-assigned', 'Player is already assigned to a team');
     }
 
     // Add player to team
-    TeamsCollection.updateAsync(
-      { _id: teamId },
-      { $addToSet: { memberIds: playerId } }
+    await TeamsCollection.updateAsync(
+        { _id: teamId },
+        { $addToSet: { memberIds: playerId } }
     );
 
     // Update player's team reference
-    return PlayersCollection.updateAsync(
-      { _id: playerId },
-      { $set: { teamId: teamId } }
+    return await PlayersCollection.updateAsync(
+        { _id: playerId },
+        { $set: { teamId: teamId } }
     );
-  },
+    },
 
   /**
    * Remove player from team
