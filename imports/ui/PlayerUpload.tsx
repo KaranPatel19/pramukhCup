@@ -29,8 +29,11 @@ export const PlayerUpload: React.FC = () => {
       const fileName = file.name.toLowerCase();
       
       if (fileName.endsWith('.xlsx')) {
-        // For Excel files, send as ArrayBuffer
-        Meteor.call('players.uploadExcel', fileData, (error: Error | null, result: number) => {
+        // Convert ArrayBuffer to Uint8Array for Meteor transmission
+        const uint8Array = new Uint8Array(fileData as ArrayBuffer);
+        const arrayData = Array.from(uint8Array);
+        
+        Meteor.call('players.uploadExcel', arrayData, (error: Error | null, result: number) => {
           setIsUploading(false);
           if (error) {
             setUploadResult(`Error: ${error.message}`);
@@ -49,11 +52,6 @@ export const PlayerUpload: React.FC = () => {
           }
         });
       }
-    };
-
-    reader.onerror = () => {
-      setIsUploading(false);
-      setUploadResult('Error reading file.');
     };
 
     // Read file differently based on type

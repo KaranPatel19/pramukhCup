@@ -71,66 +71,103 @@ async 'players.uploadCsv'(csvData: string) {
    * @param excelData The Excel file data as ArrayBuffer
    * @returns Number of players imported
    */
-  async 'players.uploadExcel'(excelData: ArrayBuffer) {
-    check(excelData, Match.Any);
+  async 'players.uploadExcel'(excelData: number[]) {
+  check(excelData, Match.Any);
 
-    try {
-      // Read the Excel file
-      const workbook = XLSX.read(excelData, { type: 'array' });
+  try {
+    // Debug the incoming data
+    console.log('Received data type:', typeof excelData);
+    console.log('Received data constructor:', excelData.constructor.name);
+    console.log('Data length/size:', excelData instanceof ArrayBuffer ? excelData.byteLength : ((excelData as any).length || 'unknown'));
+    console.log('Is ArrayBuffer?', excelData instanceof ArrayBuffer);
+    console.log('Is Buffer?', Buffer.isBuffer(excelData));
+    
+    // Read the Excel file - handle different data formats
+      // Read the Excel file - convert array back to Buffer
+        console.log('Converting array to Buffer for XLSX processing...');
+        const buffer = Buffer.from(excelData);
+        const workbook = XLSX.read(buffer, { type: 'buffer' });
       
       // Get the first worksheet
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      
-      // Convert to JSON
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-      
-      if (jsonData.length === 0) {
+      // Debug workbook information
+        console.log('Workbook sheet names:', workbook.SheetNames);
+        console.log('Number of sheets:', workbook.SheetNames.length);
+
+        // Get the first worksheet
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+
+        console.log('Selected sheet name:', sheetName);
+        console.log('Worksheet object:', worksheet);
+        console.log('Worksheet range:', worksheet['!ref']);
+
+        // Convert to JSON
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        console.log('Excel parsing - jsonData length:', jsonData.length);
+        console.log('Excel parsing - first row sample:', jsonData[0]);
+
+        // If jsonData is empty, try alternative parsing methods
+        if (jsonData.length === 0) {
+        console.log('Trying alternative parsing...');
+        
+        // Try with different options
+        const alternativeData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        console.log('Alternative parsing - array format:', alternativeData);
+        
+        // Try getting raw cell values
+        const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:Z100');
+        console.log('Cell range:', range);
+        console.log('Cell A1 value:', worksheet['A1']);
+        console.log('Cell B1 value:', worksheet['B1']);
+        }
+
+        if (jsonData.length === 0) {
         throw new Meteor.Error('empty-file', 'Excel file is empty');
-      }
-      
-      // Get headers from first row
-      const headers = jsonData[0] as string[];
-      const rows = jsonData.slice(1);
-      
-      let insertCount = 0;
-      
-      // Process each row
-      for (const rowData of rows) {
-        const row = rowData as any[];
-        if (row.length === 0) continue;
+        }
+
+        let insertCount = 0;
+
+        // Process each row
+        for (const playerData of jsonData) {
+        const player = playerData as any;
+        console.log('Processing player:', player);
+
         
-        // Create object from headers and row data
-        const player: any = {};
-        headers.forEach((header, index) => {
-          player[header] = row[index];
-        });
-        
+        // Validate required fields
         // Validate required fields
         if (!player['First Name'] || !player['Last Name'] || !player['Email'] || 
             !player['Phone'] || !player['Age Group'] || !player['Player Type'] || 
             player['Batting Skill'] === undefined || player['Bowling Skill'] === undefined || 
             player['Fielding Skill'] === undefined) {
-          continue;
+        console.log('Skipping player due to missing fields. Player data:', JSON.stringify(player, null, 2));
+        console.log('Missing fields check:');
+        console.log('First Name:', player['First Name']);
+        console.log('Last Name:', player['Last Name']);
+        console.log('Email:', player['Email']);
+        console.log('Phone:', player['Phone']);
+        console.log('Age Group:', player['Age Group']);
+        console.log('Player Type:', player['Player Type']);
+        continue;
         }
 
         // Create a player object
         const newPlayer: Omit<PlayerType, '_id'> = {
-          firstName: player['First Name'],
-          lastName: player['Last Name'],
-          email: player['Email'],
-          phone: Number(player['Phone']),
-          ageGroup: player['Age Group'],
-          playerType: player['Player Type'],
-          tShirtSize: player['T-Shirt Size'] || '',
-          battingSkill: Number(player['Batting Skill']),
-          bowlingSkill: Number(player['Bowling Skill']),
-          fieldingSkill: Number(player['Fielding Skill']),
-          howMuchDoYouPlay: player['How Much Do You Play'] || '',
-          photo: player['Photo'] || '',
-          consent: player['Consent'] || '',
-          teamId: undefined,
-          createdAt: new Date(),
+        firstName: String(player['First Name']).trim(),
+        lastName: String(player['Last Name']).trim(),
+        email: String(player['Email']).trim(),
+        phone: parseInt(String(player['Phone']).replace(/\D/g, ''), 10), // Remove non-digits and convert
+        ageGroup: String(player['Age Group']).trim(),
+        playerType: String(player['Player Type']).trim(),
+        tShirtSize: String(player['T-Shirt Size'] || '').trim(),
+        battingSkill: parseInt(String(player['Batting Skill']), 10) || 0,
+        bowlingSkill: parseInt(String(player['Bowling Skill']), 10) || 0,
+        fieldingSkill: parseInt(String(player['Fielding Skill']), 10) || 0,
+        howMuchDoYouPlay: String(player['How Much Do You Play'] || '').trim(),
+        photo: String(player['Photo'] || '').trim(),
+        consent: String(player['Consent'] || '').trim(),
+        teamId: undefined,
+        createdAt: new Date(),
         };
 
         // Insert the player and wait for completion
