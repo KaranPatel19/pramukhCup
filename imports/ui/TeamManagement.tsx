@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
 import { TeamsCollection, TeamType } from '../api/teams';
 import { PlayersCollection, PlayerType } from '../api/players';
+import { MiniPlayerCard } from './MiniPlayerCard';
 
 // Add this style block before the return statement
 const teamManagementStyles = `
@@ -59,6 +60,9 @@ export const TeamManagement: React.FC = () => {
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<'success' | 'error'>('success');
+  const [selectedPlayerForAllocation, setSelectedPlayerForAllocation] = useState<PlayerType | null>(null);
+  const [showTeamSelection, setShowTeamSelection] = useState<boolean>(false);
+  const [showAllocationModal, setShowAllocationModal] = useState<boolean>(false);
 
   // Subscribe to teams and players data
   const { teams, players, availablePlayers, selectedTeam, isLoading } = useTracker(() => {
@@ -177,6 +181,20 @@ export const TeamManagement: React.FC = () => {
   if (isLoading) {
     return <div className="loading">Loading teams and players...</div>;
   }
+  const handleAllocatePlayer = (teamId: string) => {
+  if (!selectedPlayerForAllocation?._id) return;
+  
+  Meteor.call('teams.addPlayer', teamId, selectedPlayerForAllocation._id, (error: Error | null) => {
+      if (error) {
+        showMessage(`Error: ${error.message}`, 'error');
+      } else {
+        showMessage('Player allocated successfully!', 'success');
+      }
+      setShowTeamSelection(false);
+      setSelectedPlayerForAllocation(null);
+      setShowAllocationModal(false);
+    });
+  };
 
   return (
     <>
@@ -305,7 +323,16 @@ export const TeamManagement: React.FC = () => {
 
       {/* Available Players Panel */}
       <div className="available-players-panel">
-        <h3>Available Players</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3>Available Players</h3>
+          <button 
+            className="btn-customize"
+            onClick={() => setShowAllocationModal(true)}
+            disabled={availablePlayers.length === 0}
+          >
+            Allocate Players
+          </button>
+      </div>
         
         {availablePlayers.length > 0 ? (
           <table className="available-players-table">
@@ -341,6 +368,69 @@ export const TeamManagement: React.FC = () => {
         )}
       </div>
     </div>
+    
+    {/* Allocation Modal */}
+    {showAllocationModal && (
+      <div className="player-card-overlay">
+        <div className="cards-grid">
+          <div className="cards-header">
+            <h2>Choose Player to Allocate</h2>
+            <button 
+              className="close-btn"
+              onClick={() => setShowAllocationModal(false)}
+            >
+              ×
+            </button>
+          </div>
+          <div className="cards-container">
+            {availablePlayers.map((player, index) => (
+              <MiniPlayerCard 
+                key={player._id}
+                player={player}
+                index={index}
+                onSelect={() => {
+                  setSelectedPlayerForAllocation(player);
+                  setShowTeamSelection(true);
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+    {/* Team Selection Modal */}
+    {showTeamSelection && selectedPlayerForAllocation && (
+      <div className="player-card-overlay">
+        <div className="team-assignment-modal">
+          <div className="assignment-header">
+            <h2>Assign {selectedPlayerForAllocation.firstName} {selectedPlayerForAllocation.lastName}</h2>
+            <button 
+              className="close-btn"
+              onClick={() => {
+                setShowTeamSelection(false);
+                setSelectedPlayerForAllocation(null);
+              }}
+            >
+              ×
+            </button>
+          </div>
+          <div className="teams-selection">
+            {teams.map((team) => (
+              <div 
+                key={team._id}
+                className="team-option"
+                onClick={() => handleAllocatePlayer(team._id!)}
+              >
+                <div className="team-option-name">{team.name}</div>
+                <div className="team-option-count">
+                  {(team.memberIds || []).length} members
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
     </>
   );
 };
