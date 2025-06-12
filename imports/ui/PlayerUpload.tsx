@@ -25,16 +25,30 @@ export const PlayerUpload: React.FC = () => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const csvData = e.target?.result as string;
+      const fileData = e.target?.result;
+      const fileName = file.name.toLowerCase();
       
-      Meteor.call('players.uploadCsv', csvData, (error: Error | null, result: number) => {
-        setIsUploading(false);
-        if (error) {
-          setUploadResult(`Error: ${error.message}`);
-        } else {
-          setUploadResult(`Successfully imported ${result} players.`);
-        }
-      });
+      if (fileName.endsWith('.xlsx')) {
+        // For Excel files, send as ArrayBuffer
+        Meteor.call('players.uploadExcel', fileData, (error: Error | null, result: number) => {
+          setIsUploading(false);
+          if (error) {
+            setUploadResult(`Error: ${error.message}`);
+          } else {
+            setUploadResult(`Successfully imported ${result} players.`);
+          }
+        });
+      } else {
+        // For CSV files, send as string
+        Meteor.call('players.uploadCsv', fileData as string, (error: Error | null, result: number) => {
+          setIsUploading(false);
+          if (error) {
+            setUploadResult(`Error: ${error.message}`);
+          } else {
+            setUploadResult(`Successfully imported ${result} players.`);
+          }
+        });
+      }
     };
 
     reader.onerror = () => {
@@ -42,7 +56,12 @@ export const PlayerUpload: React.FC = () => {
       setUploadResult('Error reading file.');
     };
 
-    reader.readAsText(file);
+    // Read file differently based on type
+    if (file.name.toLowerCase().endsWith('.xlsx')) {
+      reader.readAsArrayBuffer(file);
+    } else {
+      reader.readAsText(file);
+    }
   };
 
   const handleClearAll = () => {
@@ -75,7 +94,7 @@ export const PlayerUpload: React.FC = () => {
         <div className="upload-controls">
           <input 
             type="file" 
-            accept=".csv" 
+            accept=".csv,.xlsx" 
             onChange={handleFileUpload} 
             disabled={isUploading} 
           />
