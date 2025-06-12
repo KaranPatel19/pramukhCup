@@ -54,6 +54,67 @@ const teamManagementStyles = `
   .available-players-table .btn-add {
     margin: 0 2px;
   }
+
+  /* Pagination Controls */
+  .pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
+  }
+
+  .btn-pagination {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    min-width: 100px;
+  }
+
+  .btn-pagination:hover:not(:disabled) {
+    background-color: #2980b9;
+  }
+
+  .btn-pagination:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .pagination-info {
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+    flex: 1;
+  }
+
+  /* Dark mode pagination styles */
+  .dark-mode .pagination-controls {
+    background-color: #333;
+    border-top-color: #444;
+  }
+
+  .dark-mode .pagination-info {
+    color: #e0e0e0;
+  }
+
+  .dark-mode .btn-pagination {
+    background-color: #2980b9;
+  }
+
+  .dark-mode .btn-pagination:hover:not(:disabled) {
+    background-color: #3498db;
+  }
+
+  .dark-mode .btn-pagination:disabled {
+    background-color: #555;
+  }
 `;
 export const TeamManagement: React.FC = () => {
   const [newTeamName, setNewTeamName] = useState<string>('');
@@ -63,6 +124,9 @@ export const TeamManagement: React.FC = () => {
   const [selectedPlayerForAllocation, setSelectedPlayerForAllocation] = useState<PlayerType | null>(null);
   const [showTeamSelection, setShowTeamSelection] = useState<boolean>(false);
   const [showAllocationModal, setShowAllocationModal] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [currentBatch, setCurrentBatch] = useState<PlayerType[]>([]);
+
 
   // Subscribe to teams and players data
   const { teams, players, availablePlayers, selectedTeam, isLoading } = useTracker(() => {
@@ -94,6 +158,12 @@ export const TeamManagement: React.FC = () => {
     isLoading: false,
   };
 });
+// Update current batch when availablePlayers changes
+  React.useEffect(() => {
+    if (showAllocationModal && currentBatch.length === 0) {
+      updateCurrentBatch();
+    }
+  }, [showAllocationModal, teams.length]);
 
   const showMessage = (msg: string, type: 'success' | 'error') => {
     setMessage(msg);
@@ -192,8 +262,54 @@ export const TeamManagement: React.FC = () => {
       }
       setShowTeamSelection(false);
       setSelectedPlayerForAllocation(null);
-      setShowAllocationModal(false);
+      //setShowAllocationModal(false);
     });
+  };
+
+  const getPaginatedPlayers = () => {
+    const playersPerPage = teams.length || 3;
+    const startIndex = currentPage * playersPerPage;
+    const endIndex = startIndex + playersPerPage;
+    
+    // Only update the batch when page changes, not when players are allocated
+    const newBatch = availablePlayers.slice(startIndex, endIndex);
+    return newBatch;
+  };
+
+  const updateCurrentBatch = () => {
+    const playersPerPage = teams.length || 3;
+    const startIndex = currentPage * playersPerPage;
+    const endIndex = startIndex + playersPerPage;
+    const newBatch = availablePlayers.slice(startIndex, endIndex);
+    setCurrentBatch(newBatch);
+  };
+
+  const getTotalPages = () => {
+    const playersPerPage = teams.length || 3;
+    return Math.ceil(availablePlayers.length / playersPerPage);
+  };
+
+  const handleNextPage = () => {
+  const totalPages = getTotalPages();
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+      // Update batch when page changes
+      setTimeout(() => updateCurrentBatch(), 0);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+      // Update batch when page changes
+      setTimeout(() => updateCurrentBatch(), 0);
+    }
+  };
+
+  const handlePageReset = () => {
+    setCurrentPage(0);
+    // Update batch when resetting
+    setTimeout(() => updateCurrentBatch(), 0);
   };
 
   return (
@@ -327,7 +443,14 @@ export const TeamManagement: React.FC = () => {
           <h3>Available Players</h3>
           <button 
             className="btn-customize"
-            onClick={() => setShowAllocationModal(true)}
+            onClick={() => {
+              setShowAllocationModal(true);
+              handlePageReset();
+              // Set initial batch
+              const playersPerPage = teams.length || 3;
+              const initialBatch = availablePlayers.slice(0, playersPerPage);
+              setCurrentBatch(initialBatch);
+            }}
             disabled={availablePlayers.length === 0}
           >
             Allocate Players
@@ -374,7 +497,18 @@ export const TeamManagement: React.FC = () => {
       <div className="player-card-overlay">
         <div className="cards-grid">
           <div className="cards-header">
-            <h2>Choose Player to Allocate</h2>
+          <h2>Choose Player to Allocate - Showing {teams.length || 3} at a time</h2>
+          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
+            {availablePlayers.length} total players available
+          </p>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button 
+              className="btn-primary"
+              onClick={() => setShowAllocationModal(false)}
+              style={{ padding: '8px 16px', fontSize: '14px' }}
+            >
+              Done
+            </button>
             <button 
               className="close-btn"
               onClick={() => setShowAllocationModal(false)}
@@ -382,19 +516,46 @@ export const TeamManagement: React.FC = () => {
               ×
             </button>
           </div>
+        </div>
           <div className="cards-container">
-            {availablePlayers.map((player, index) => (
-              <MiniPlayerCard 
-                key={player._id}
-                player={player}
-                index={index}
-                onSelect={() => {
-                  setSelectedPlayerForAllocation(player);
-                  setShowTeamSelection(true);
-                }}
-              />
-            ))}
+            {currentBatch
+              .filter(player => availablePlayers.includes(player)) // Only show if still available
+              .map((player, index) => (
+                <MiniPlayerCard 
+                  key={player._id}
+                  player={player}
+                  index={index}
+                  onSelect={() => {
+                    setSelectedPlayerForAllocation(player);
+                    setShowTeamSelection(true);
+                  }}
+                />
+              ))}
           </div>
+
+        {/* Pagination Controls */}
+        <div className="pagination-controls">
+          <button 
+            className="btn-pagination"
+            onClick={handlePrevPage}
+            disabled={currentPage === 0}
+          >
+            ← Previous
+          </button>
+          
+          <span className="pagination-info">
+            Page {currentPage + 1} of {getTotalPages()} 
+            ({currentBatch.filter(player => availablePlayers.includes(player)).length} of {availablePlayers.length} players)
+          </span>
+          
+          <button 
+            className="btn-pagination"
+            onClick={handleNextPage}
+            disabled={currentPage >= getTotalPages() - 1}
+          >
+            Next →
+          </button>
+        </div>
         </div>
       </div>
     )}
