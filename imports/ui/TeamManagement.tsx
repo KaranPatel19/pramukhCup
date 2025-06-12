@@ -280,11 +280,18 @@ export const TeamManagement: React.FC = () => {
 
   const updateCurrentBatch = () => {
     const playersPerPage = teams.length || 3;
-    const startIndex = currentPage * playersPerPage;
+    const totalPages = Math.ceil(availablePlayers.length / playersPerPage);
+    
+    // Ensure currentPage is not out of bounds
+    const safePage = Math.min(currentPage, Math.max(totalPages - 1, 0));
+    setCurrentPage(safePage);
+
+    const startIndex = safePage * playersPerPage;
     const endIndex = startIndex + playersPerPage;
     const newBatch = availablePlayers.slice(startIndex, endIndex);
     setCurrentBatch(newBatch);
   };
+
 
   const getTotalPages = () => {
     const playersPerPage = teams.length || 3;
