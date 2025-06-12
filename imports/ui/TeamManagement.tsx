@@ -158,12 +158,11 @@ export const TeamManagement: React.FC = () => {
     isLoading: false,
   };
 });
-// Update current batch when availablePlayers changes
   React.useEffect(() => {
-    if (showAllocationModal && currentBatch.length === 0) {
+    if (showAllocationModal) {
       updateCurrentBatch();
     }
-  }, [showAllocationModal, teams.length]);
+  }, [showAllocationModal, currentPage]);
 
   const showMessage = (msg: string, type: 'success' | 'error') => {
     setMessage(msg);
@@ -259,10 +258,13 @@ export const TeamManagement: React.FC = () => {
         showMessage(`Error: ${error.message}`, 'error');
       } else {
         showMessage('Player allocated successfully!', 'success');
+        // Remove the allocated player from current batch
+        setCurrentBatch(prevBatch => 
+          prevBatch.filter(player => player._id !== selectedPlayerForAllocation._id)
+        );
       }
       setShowTeamSelection(false);
       setSelectedPlayerForAllocation(null);
-      //setShowAllocationModal(false);
     });
   };
 
@@ -444,12 +446,11 @@ export const TeamManagement: React.FC = () => {
           <button 
             className="btn-customize"
             onClick={() => {
-              setShowAllocationModal(true);
-              handlePageReset();
-              // Set initial batch
+              setCurrentPage(0);
               const playersPerPage = teams.length || 3;
               const initialBatch = availablePlayers.slice(0, playersPerPage);
               setCurrentBatch(initialBatch);
+              setShowAllocationModal(true);
             }}
             disabled={availablePlayers.length === 0}
           >
@@ -518,21 +519,24 @@ export const TeamManagement: React.FC = () => {
           </div>
         </div>
           <div className="cards-container">
-            {currentBatch
-              .filter(player => availablePlayers.includes(player)) // Only show if still available
-              .map((player, index) => (
-                <MiniPlayerCard 
-                  key={player._id}
-                  player={player}
-                  index={index}
-                  onSelect={() => {
-                    setSelectedPlayerForAllocation(player);
-                    setShowTeamSelection(true);
-                  }}
-                />
-              ))}
-          </div>
-
+          {availablePlayers.length > 0 ? (
+            currentBatch.map((player, index) => (
+              <MiniPlayerCard 
+                key={player._id}
+                player={player}
+                index={index}
+                onSelect={() => {
+                  setSelectedPlayerForAllocation(player);
+                  setShowTeamSelection(true);
+                }}
+              />
+            ))
+          ) : (
+            <div style={{ padding: '20px', textAlign: 'center', gridColumn: '1 / -1' }}>
+              No available players to allocate
+            </div>
+          )}
+        </div>
         {/* Pagination Controls */}
         <div className="pagination-controls">
           <button 
@@ -545,9 +549,11 @@ export const TeamManagement: React.FC = () => {
           
           <span className="pagination-info">
             Page {currentPage + 1} of {getTotalPages()} 
-            ({currentBatch.filter(player => availablePlayers.includes(player)).length} of {availablePlayers.length} players)
-          </span>
-          
+            ({currentBatch.length} remaining in this batch, {availablePlayers.length} total available)
+            {/* Debug info - remove later */}
+            <br />
+            <small>Available: {availablePlayers.length}, Batch: {currentBatch.length}, Teams: {teams.length}</small>
+        </span>
           <button 
             className="btn-pagination"
             onClick={handleNextPage}
