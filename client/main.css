@@ -1012,31 +1012,6 @@ button:disabled {
     transform: scale(1) translateY(0);
   }
 }
-
-.mini-player-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  position: relative;
-  transform-style: preserve-3d;
-  animation: separateCards 0.8s ease-out forwards;
-  opacity: 0;
-  transform: translateX(0) translateY(0) translateZ(0) rotateY(0deg);
-}
-
-.mini-player-card.card-1 { animation-delay: 0s; }
-.mini-player-card.card-2 { animation-delay: 0.1s; }
-.mini-player-card.card-3 { animation-delay: 0.2s; }
-.mini-player-card.card-4 { animation-delay: 0.3s; }
-.mini-player-card.card-5 { animation-delay: 0.4s; }
-.mini-player-card.card-6 { animation-delay: 0.5s; }
-.mini-player-card.card-7 { animation-delay: 0.6s; }
-.mini-player-card.card-8 { animation-delay: 0.7s; }
-.mini-player-card.card-9 { animation-delay: 0.8s; }
-.mini-player-card.card-10 { animation-delay: 0.9s; }
-
 @keyframes separateCards {
   0% {
     opacity: 0;
@@ -1051,74 +1026,7 @@ button:disabled {
     transform: translateX(0) translateY(0) translateZ(0) rotateY(0deg);
   }
 }
-.mini-player-card:hover {
-  transform: translateY(-5px) rotateY(2deg);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-}
 
-.mini-card-header {
-  padding: 10px;
-  color: white;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.mini-card-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-  pointer-events: none;
-}
-.mini-card-name {
-  font-weight: bold;
-  font-size: 14px;
-  position: relative;
-  z-index: 1;
-}
-.mini-card-body {
-  padding: 10px;
-  background: white;
-}
-
-/* Dark mode support for cards */
-.dark-mode .mini-player-card {
-  background-color: #2d2d2d;
-  border-color: #444;
-}
-
-.dark-mode .mini-card-body {
-  background-color: #2d2d2d;
-}
-
-.dark-mode .mini-card-category {
-  color: #aaa;
-}
-
-.dark-mode .mini-card-stats div {
-  color: #ddd;
-}
-
-.dark-mode .cards-grid {
-  background-color: #2d2d2d;
-  color: #e0e0e0;
-}
-.mini-card-category {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-
-.mini-card-stats div {
-  font-size: 11px;
-  margin-bottom: 2px;
-  color: #333;
-}
 
 .team-assignment-modal {
   background: white;
@@ -1186,9 +1094,4 @@ button:disabled {
     transform: translateX(0) translateY(0) rotateZ(0deg);
     opacity: 1;
   }
-}
-
-/* Apply shuffle before separation */
-.mini-player-card {
-  animation: cardShuffle 0.5s ease-out forwards, separateCards 0.8s ease-out 0.5s forwards;
 }
