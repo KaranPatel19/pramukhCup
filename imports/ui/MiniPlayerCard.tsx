@@ -10,7 +10,7 @@ const miniPlayerCardStyles = `
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 220px;
+    height: 320px;
     position: relative;
     overflow: hidden;
   }
@@ -193,8 +193,9 @@ export const MiniPlayerCard: React.FC<MiniPlayerCardProps> = ({ player, index, o
   };
 
   const getTotalSkill = () => {
-    return player.battingSkill + player.bowlingSkill + player.fieldingSkill;
+  return player.boostedStars ?? (player.battingSkill + player.bowlingSkill + player.fieldingSkill);
   };
+
 
   return (
     <div 
@@ -220,6 +221,7 @@ export const MiniPlayerCard: React.FC<MiniPlayerCardProps> = ({ player, index, o
           <div>🏃 Fielding: {player.fieldingSkill}/10</div>
           <div style={{ fontWeight: 'bold', marginTop: '5px', color: '#e74c3c' }}>
             ⭐ Total: {getTotalSkill()}/30
+            {player.boostedStars !== undefined && <span style={{ fontSize: '10px', marginLeft: '5px', color: '#999' }}>(boosted)</span>}
           </div>
         </div>
       </div>

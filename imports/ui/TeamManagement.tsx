@@ -184,7 +184,7 @@ export const TeamManagement: React.FC = () => {
   const [playerTypeFilter, setPlayerTypeFilter] = useState<string>('all'); // NEW
   const [showFilterModal, setShowFilterModal] = useState<boolean>(false);
   const [howMuchDoYouPlayFilter, setHowMuchDoYouPlayFilter] = useState<string>('all'); // NEW
-
+  const [playPercentageBoost, setPlayPercentageBoost] = useState<number>(0); // NEW
 
   // Subscribe to teams and players data
   const { teams, players, availablePlayers, selectedTeam, isLoading } = useTracker(() => {
@@ -346,7 +346,19 @@ export const TeamManagement: React.FC = () => {
 
     const startIndex = safePage * playersPerPage;
     const endIndex = startIndex + playersPerPage;
-    let filteredPlayers = [...availablePlayers];
+    let filteredPlayers = [...availablePlayers].map((p) => {
+    let total = p.battingSkill + p.bowlingSkill + p.fieldingSkill;
+
+    if (
+      howMuchDoYouPlayFilter !== 'all' &&
+      p.howMuchDoYouPlay?.toLowerCase() === howMuchDoYouPlayFilter.toLowerCase()
+    ) {
+      total = Math.min(30, Math.round(total * (1 + playPercentageBoost / 100)));
+    }
+
+    return { ...p, boostedStars: total }; // Add boosted stars as a field
+  });
+
     if (playerTypeFilter !== 'all') {
       filteredPlayers = filteredPlayers.filter(
         p => p.playerType.toLowerCase() === playerTypeFilter.toLowerCase()
@@ -358,11 +370,10 @@ export const TeamManagement: React.FC = () => {
       );
     }
 
-  const sortedPlayers = filteredPlayers.sort((a, b) => {
-    const totalA = a.battingSkill + a.bowlingSkill + a.fieldingSkill;
-    const totalB = b.battingSkill + b.bowlingSkill + b.fieldingSkill;
-    return sortOrder === 'asc' ? totalA - totalB : totalB - totalA;
-  });
+  const sortedPlayers = filteredPlayers.sort((a, b) =>
+  sortOrder === 'asc' ? a.boostedStars - b.boostedStars : b.boostedStars - a.boostedStars
+);
+
 
     const newBatch = sortedPlayers.slice(startIndex, endIndex);
     setFilteredPlayers(sortedPlayers); // NEW
@@ -733,6 +744,18 @@ export const TeamManagement: React.FC = () => {
                   <option value="Once a month">Once a month</option>
                   <option value="Once a while">Once a while</option>
                 </select>
+                {howMuchDoYouPlayFilter !== 'all' && (
+                <label>
+                  Boost player stars by (%):
+                  <input
+                    type="number"
+                    value={playPercentageBoost}
+                    min={0}
+                    max={100}
+                    onChange={(e) => setPlayPercentageBoost(parseInt(e.target.value) || 0)}
+                  />
+                </label>
+              )}
               </label>
               <button
                 className="btn-primary"
