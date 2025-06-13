@@ -183,6 +183,8 @@ export const TeamManagement: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc'); // NEW
   const [playerTypeFilter, setPlayerTypeFilter] = useState<string>('all'); // NEW
   const [showFilterModal, setShowFilterModal] = useState<boolean>(false);
+  const [howMuchDoYouPlayFilter, setHowMuchDoYouPlayFilter] = useState<string>('all'); // NEW
+
 
   // Subscribe to teams and players data
   const { teams, players, availablePlayers, selectedTeam, isLoading } = useTracker(() => {
@@ -350,6 +352,11 @@ export const TeamManagement: React.FC = () => {
         p => p.playerType.toLowerCase() === playerTypeFilter.toLowerCase()
       );
     } // ← this closing brace was missing
+    if (howMuchDoYouPlayFilter !== 'all') {
+      filteredPlayers = filteredPlayers.filter(
+        p => p.howMuchDoYouPlay?.toLowerCase() === howMuchDoYouPlayFilter.toLowerCase()
+      );
+    }
 
   const sortedPlayers = filteredPlayers.sort((a, b) => {
     const totalA = a.battingSkill + a.bowlingSkill + a.fieldingSkill;
@@ -715,7 +722,18 @@ export const TeamManagement: React.FC = () => {
                   <option value="wicket-keeper">Wicket-Keeper</option>
                 </select>
               </label>
-
+              <label>
+                How Much Do You Play:
+                <select
+                  value={howMuchDoYouPlayFilter}
+                  onChange={(e) => setHowMuchDoYouPlayFilter(e.target.value)}
+                >
+                  <option value="all">All</option>
+                  <option value="Regularly">Regularly</option>
+                  <option value="Once a month">Once a month</option>
+                  <option value="Once a while">Once a while</option>
+                </select>
+              </label>
               <button
                 className="btn-primary"
                 onClick={() => {
