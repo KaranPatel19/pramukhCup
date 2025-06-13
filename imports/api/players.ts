@@ -20,7 +20,4 @@ export interface PlayerType {
   createdAt: Date;
 }
 
-// Collection for player data
 export const PlayersCollection = new Mongo.Collection<PlayerType>('players');
-
-// If you need to add schema validation ca

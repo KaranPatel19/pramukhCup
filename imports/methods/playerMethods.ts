@@ -14,7 +14,6 @@ async 'players.uploadCsv'(csvData: string) {
   check(csvData, String);
 
   try {
-    // Parse the CSV data
     const result = Papa.parse(csvData, {
       header: true,
       skipEmptyLines: true,
@@ -28,14 +27,12 @@ async 'players.uploadCsv'(csvData: string) {
     const players = result.data as any[];
     let insertCount = 0;
 
-    // Validate and insert each player
+    
     for (const player of players) {
-      // Ensure each player has the required fields
+      
       if (!player['First Name'] || !player['Last Name'] || !player['Email'] || !player['Phone'] || !player['Age Group'] || !player['Player Type'] || player['Batting Skill'] === undefined || player['Bowling Skill'] === undefined || player['Fielding Skill'] === undefined) {
-        continue; // Skip invalid entries
+        continue; 
       }
-
-      // Create a player object
       const newPlayer: Omit<PlayerType, '_id'> = {
         firstName: player['First Name'],
         lastName: player['Last Name'],
@@ -53,8 +50,6 @@ async 'players.uploadCsv'(csvData: string) {
         teamId: undefined,
         createdAt: new Date(),
       };
-
-      // Insert the player and wait for completion
       await PlayersCollection.insertAsync(newPlayer);
       insertCount++;
     }
@@ -75,25 +70,17 @@ async 'players.uploadCsv'(csvData: string) {
   check(excelData, Match.Any);
 
   try {
-    // Debug the incoming data
     console.log('Received data type:', typeof excelData);
     console.log('Received data constructor:', excelData.constructor.name);
     console.log('Data length/size:', excelData instanceof ArrayBuffer ? excelData.byteLength : ((excelData as any).length || 'unknown'));
     console.log('Is ArrayBuffer?', excelData instanceof ArrayBuffer);
     console.log('Is Buffer?', Buffer.isBuffer(excelData));
-    
-    // Read the Excel file - handle different data formats
-      // Read the Excel file - convert array back to Buffer
         console.log('Converting array to Buffer for XLSX processing...');
         const buffer = Buffer.from(excelData);
         const workbook = XLSX.read(buffer, { type: 'buffer' });
-      
-      // Get the first worksheet
-      // Debug workbook information
         console.log('Workbook sheet names:', workbook.SheetNames);
         console.log('Number of sheets:', workbook.SheetNames.length);
 
-        // Get the first worksheet
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
 
@@ -101,21 +88,18 @@ async 'players.uploadCsv'(csvData: string) {
         console.log('Worksheet object:', worksheet);
         console.log('Worksheet range:', worksheet['!ref']);
 
-        // Convert to JSON
+
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
         console.log('Excel parsing - jsonData length:', jsonData.length);
         console.log('Excel parsing - first row sample:', jsonData[0]);
 
-        // If jsonData is empty, try alternative parsing methods
         if (jsonData.length === 0) {
         console.log('Trying alternative parsing...');
         
-        // Try with different options
         const alternativeData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
         console.log('Alternative parsing - array format:', alternativeData);
         
-        // Try getting raw cell values
         const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:Z100');
         console.log('Cell range:', range);
         console.log('Cell A1 value:', worksheet['A1']);
@@ -128,14 +112,10 @@ async 'players.uploadCsv'(csvData: string) {
 
         let insertCount = 0;
 
-        // Process each row
         for (const playerData of jsonData) {
         const player = playerData as any;
         console.log('Processing player:', player);
 
-        
-        // Validate required fields
-        // Validate required fields
         if (!player['First Name'] || !player['Last Name'] || !player['Email'] || 
             !player['Phone'] || !player['Age Group'] || !player['Player Type'] || 
             player['Batting Skill'] === undefined || player['Bowling Skill'] === undefined || 
@@ -150,13 +130,11 @@ async 'players.uploadCsv'(csvData: string) {
         console.log('Player Type:', player['Player Type']);
         continue;
         }
-
-        // Create a player object
         const newPlayer: Omit<PlayerType, '_id'> = {
         firstName: String(player['First Name']).trim(),
         lastName: String(player['Last Name']).trim(),
         email: String(player['Email']).trim(),
-        phone: parseInt(String(player['Phone']).replace(/\D/g, ''), 10), // Remove non-digits and convert
+        phone: parseInt(String(player['Phone']).replace(/\D/g, ''), 10), 
         ageGroup: String(player['Age Group']).trim(),
         playerType: String(player['Player Type']).trim(),
         tShirtSize: String(player['T-Shirt Size'] || '').trim(),
@@ -170,7 +148,6 @@ async 'players.uploadCsv'(csvData: string) {
         createdAt: new Date(),
         };
 
-        // Insert the player and wait for completion
         await PlayersCollection.insertAsync(newPlayer);
         insertCount++;
       }
@@ -182,29 +159,18 @@ async 'players.uploadCsv'(csvData: string) {
     }
   },
 
-  /**
-   * Remove all players from the collection
-   */
   'players.removeAll'() {
     return PlayersCollection.removeAsync({});
   },
-  // ... rest of methods
 
-  /**
-   * Remove a specific player by ID
-   */
   'players.remove'(playerId: string) {
     check(playerId, String);
     return PlayersCollection.removeAsync({ _id: playerId });
   },
 
-  /**
- * Update player information
- */
 'players.update'(playerId: string, data: Partial<PlayerType>) {
   check(playerId, String);
   
-  // Validate fields
   if (data.firstName) check(data.firstName, String);
   if (data.lastName) check(data.lastName, String);
   if (data.email) check(data.email, String);
@@ -223,7 +189,6 @@ async 'players.uploadCsv'(csvData: string) {
 }
 });
 
-// If we need to add the publication here
 if (Meteor.isServer) {
   Meteor.publish('players', function () {
     return PlayersCollection.find();

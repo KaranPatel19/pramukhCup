@@ -1,8 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { LinksCollection } from '/imports/api/links';
 import { PlayersCollection } from '/imports/api/players';
-
-// Import methods to ensure they're registered
 import '../imports/methods/playerMethods';
 import '../imports/methods/teamMethods';
 
@@ -11,9 +9,7 @@ async function insertLink({ title, url }: { title: string; url: string }) {
 }
 
 Meteor.startup(async () => {
-  // If the Links collection is empty, add some data.
   try {
-    // Use countAsync() instead of count() as required by newer Meteor versions
     if (await LinksCollection.find().countAsync() === 0) {
       await insertLink({
         title: 'Do the Tutorial',
@@ -35,14 +31,10 @@ Meteor.startup(async () => {
         url: 'https://forums.meteor.com',
       });
     }
-
-    // We publish the entire Links collection to all clients.
-    // In order to be fetched in real-time to the clients
     Meteor.publish("links", function () {
       return LinksCollection.find();
     });
 
-    // Publish players collection
     Meteor.publish("players", function () {
       return PlayersCollection.find();
     });

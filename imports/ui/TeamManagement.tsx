@@ -5,7 +5,7 @@ import { TeamsCollection, TeamType } from '../api/teams';
 import { PlayersCollection, PlayerType } from '../api/players';
 import { MiniPlayerCard } from './MiniPlayerCard';
 
-// Add this style block before the return statement
+
 const teamManagementStyles = `
   /* Enhanced Team Management Styles */
   .team-captain {
@@ -179,14 +179,12 @@ export const TeamManagement: React.FC = () => {
   const [showAllocationModal, setShowAllocationModal] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [currentBatch, setCurrentBatch] = useState<PlayerType[]>([]);
-  const [filteredPlayers, setFilteredPlayers] = useState<PlayerType[]>([]); // NEW
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc'); // NEW
-  const [playerTypeFilter, setPlayerTypeFilter] = useState<string>('all'); // NEW
+  const [filteredPlayers, setFilteredPlayers] = useState<PlayerType[]>([]);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc'); 
+  const [playerTypeFilter, setPlayerTypeFilter] = useState<string>('all');
   const [showFilterModal, setShowFilterModal] = useState<boolean>(false);
-  const [howMuchDoYouPlayFilter, setHowMuchDoYouPlayFilter] = useState<string>('all'); // NEW
-  const [playPercentageBoost, setPlayPercentageBoost] = useState<number>(0); // NEW
-
-  // Subscribe to teams and players data
+  const [howMuchDoYouPlayFilter, setHowMuchDoYouPlayFilter] = useState<string>('all'); 
+  const [playPercentageBoost, setPlayPercentageBoost] = useState<number>(0);
   const { teams, players, availablePlayers, selectedTeam, isLoading } = useTracker(() => {
   const teamsSubscription = Meteor.subscribe('teams');
   const playersSubscription = Meteor.subscribe('players');
@@ -316,7 +314,6 @@ export const TeamManagement: React.FC = () => {
         showMessage(`Error: ${error.message}`, 'error');
       } else {
         showMessage('Player allocated successfully!', 'success');
-        // Remove the allocated player from current batch
         setCurrentBatch(prevBatch => 
           prevBatch.filter(player => player._id !== selectedPlayerForAllocation._id)
         );
@@ -330,8 +327,6 @@ export const TeamManagement: React.FC = () => {
     const playersPerPage = teams.length || 3;
     const startIndex = currentPage * playersPerPage;
     const endIndex = startIndex + playersPerPage;
-    
-    // Only update the batch when page changes, not when players are allocated
     const newBatch = availablePlayers.slice(startIndex, endIndex);
     return newBatch;
   };
@@ -339,8 +334,6 @@ export const TeamManagement: React.FC = () => {
   const updateCurrentBatch = () => {
     const playersPerPage = teams.length || 3;
     const totalPages = Math.ceil(availablePlayers.length / playersPerPage);
-    
-    // Ensure currentPage is not out of bounds
     const safePage = Math.min(currentPage, Math.max(totalPages - 1, 0));
     setCurrentPage(safePage);
 
@@ -356,14 +349,14 @@ export const TeamManagement: React.FC = () => {
       total = Math.min(30, Math.round(total * (1 + playPercentageBoost / 100)));
     }
 
-    return { ...p, boostedStars: total }; // Add boosted stars as a field
+    return { ...p, boostedStars: total }; 
   });
 
     if (playerTypeFilter !== 'all') {
       filteredPlayers = filteredPlayers.filter(
         p => p.playerType.toLowerCase() === playerTypeFilter.toLowerCase()
       );
-    } // ← this closing brace was missing
+    } 
     if (howMuchDoYouPlayFilter !== 'all') {
       filteredPlayers = filteredPlayers.filter(
         p => p.howMuchDoYouPlay?.toLowerCase() === howMuchDoYouPlayFilter.toLowerCase()
@@ -376,7 +369,7 @@ export const TeamManagement: React.FC = () => {
 
 
     const newBatch = sortedPlayers.slice(startIndex, endIndex);
-    setFilteredPlayers(sortedPlayers); // NEW
+    setFilteredPlayers(sortedPlayers); 
     setCurrentBatch(newBatch);
       };
 
@@ -390,7 +383,6 @@ export const TeamManagement: React.FC = () => {
   const totalPages = getTotalPages();
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
-      // Update batch when page changes
       setTimeout(() => updateCurrentBatch(), 0);
     }
   };
@@ -398,14 +390,12 @@ export const TeamManagement: React.FC = () => {
   const handlePrevPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
-      // Update batch when page changes
       setTimeout(() => updateCurrentBatch(), 0);
     }
   };
 
   const handlePageReset = () => {
     setCurrentPage(0);
-    // Update batch when resetting
     setTimeout(() => updateCurrentBatch(), 0);
   };
 
@@ -541,7 +531,7 @@ export const TeamManagement: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button 
               className="btn-customize"
-              onClick={() => setShowFilterModal(true)} // NEW
+              onClick={() => setShowFilterModal(true)} 
             >
               Filter
           </button>
@@ -549,7 +539,7 @@ export const TeamManagement: React.FC = () => {
             className="btn-customize"
             onClick={() => {
               setCurrentPage(0);
-              updateCurrentBatch(); // use updated method with sorting
+              updateCurrentBatch(); 
               setShowAllocationModal(true);
             }}
             disabled={availablePlayers.length === 0}

@@ -7,7 +7,6 @@ export const PlayerUpload: React.FC = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadResult, setUploadResult] = useState<string | null>(null);
 
-  // Subscribe to players data
   const { players, isLoading } = useTracker(() => {
     const subscription = Meteor.subscribe('players');
     return {
@@ -29,7 +28,6 @@ export const PlayerUpload: React.FC = () => {
       const fileName = file.name.toLowerCase();
       
       if (fileName.endsWith('.xlsx')) {
-        // Convert ArrayBuffer to Uint8Array for Meteor transmission
         const uint8Array = new Uint8Array(fileData as ArrayBuffer);
         const arrayData = Array.from(uint8Array);
         
@@ -42,7 +40,6 @@ export const PlayerUpload: React.FC = () => {
           }
         });
       } else {
-        // For CSV files, send as string
         Meteor.call('players.uploadCsv', fileData as string, (error: Error | null, result: number) => {
           setIsUploading(false);
           if (error) {
@@ -53,8 +50,6 @@ export const PlayerUpload: React.FC = () => {
         });
       }
     };
-
-    // Read file differently based on type
     if (file.name.toLowerCase().endsWith('.xlsx')) {
       reader.readAsArrayBuffer(file);
     } else {

@@ -5,8 +5,6 @@ import { PlayersCollection, PlayerType } from '../api/players';
 
 export const DatabaseInspector: React.FC = () => {
   const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null);
-
-  // Subscribe to players data
   const { players, isLoading } = useTracker(() => {
     const subscription = Meteor.subscribe('players');
     return {

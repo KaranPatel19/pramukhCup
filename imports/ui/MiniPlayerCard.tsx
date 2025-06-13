@@ -172,7 +172,6 @@ interface MiniPlayerCardProps {
 }
 
 export const MiniPlayerCard: React.FC<MiniPlayerCardProps> = ({ player, index, onSelect }) => {
-  // Inject styles
   React.useEffect(() => {
     const styleId = 'mini-player-card-styles';
     if (!document.getElementById(styleId)) {

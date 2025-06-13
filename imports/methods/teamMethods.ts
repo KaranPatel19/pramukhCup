@@ -4,9 +4,6 @@ import { TeamsCollection, TeamType } from '../api/teams';
 import { PlayersCollection } from '../api/players';
 
 Meteor.methods({
-  /**
-   * Create a new team
-   */
     async 'teams.create'(name: string) {
     check(name, String);
     
@@ -14,7 +11,6 @@ Meteor.methods({
         throw new Meteor.Error('invalid-name', 'Team name cannot be empty');
     }
 
-    // Check if team name already exists
     const existingTeam = await TeamsCollection.findOneAsync({ name: name.trim() });
     if (existingTeam) {
         throw new Meteor.Error('duplicate-name', 'Team name already exists');
@@ -28,14 +24,9 @@ Meteor.methods({
 
     return await TeamsCollection.insertAsync(newTeam);
     },
-
-  /**
-   * Delete a team
-   */
   'teams.delete'(teamId: string) {
     check(teamId, String);
     
-    // Remove team reference from all players
     PlayersCollection.updateAsync(
       { teamId: teamId },
       { $unset: { teamId: "" } },
@@ -65,42 +56,32 @@ Meteor.methods({
         throw new Meteor.Error('player-already-assigned', 'Player is already assigned to a team');
     }
 
-    // Add player to team
     await TeamsCollection.updateAsync(
         { _id: teamId },
         { $addToSet: { memberIds: playerId } }
     );
 
-    // Update player's team reference
     return await PlayersCollection.updateAsync(
         { _id: playerId },
         { $set: { teamId: teamId } }
     );
     },
 
-  /**
-   * Remove player from team
-   */
   'teams.removePlayer'(teamId: string, playerId: string) {
     check(teamId, String);
     check(playerId, String);
 
-    // Remove player from team
     TeamsCollection.updateAsync(
       { _id: teamId },
       { $pull: { memberIds: playerId } }
     );
 
-    // Remove team reference from player
     return PlayersCollection.updateAsync(
       { _id: playerId },
       { $unset: { teamId: "" } }
     );
   },
 
-  /**
-   * Set team captain
-   */
   'teams.setCaptain'(teamId: string, playerId: string) {
     check(teamId, String);
     check(playerId, String);
