@@ -115,6 +115,59 @@ const teamManagementStyles = `
   .dark-mode .btn-pagination:disabled {
     background-color: #555;
   }
+      /* Filter Modal Styles */
+  .filter-modal {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+  }
+
+  .filter-modal h2 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    color: #2c3e50;
+    text-align: center;
+  }
+
+  .filter-modal label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .filter-modal select {
+    padding: 8px;
+    font-size: 14px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .filter-modal .btn-primary {
+    align-self: center;
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .filter-modal .btn-primary:hover {
+    background-color: #2980b9;
+  }
+
 `;
 export const TeamManagement: React.FC = () => {
   const [newTeamName, setNewTeamName] = useState<string>('');
@@ -126,7 +179,10 @@ export const TeamManagement: React.FC = () => {
   const [showAllocationModal, setShowAllocationModal] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [currentBatch, setCurrentBatch] = useState<PlayerType[]>([]);
-
+  const [filteredPlayers, setFilteredPlayers] = useState<PlayerType[]>([]); // NEW
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc'); // NEW
+  const [playerTypeFilter, setPlayerTypeFilter] = useState<string>('all'); // NEW
+  const [showFilterModal, setShowFilterModal] = useState<boolean>(false);
 
   // Subscribe to teams and players data
   const { teams, players, availablePlayers, selectedTeam, isLoading } = useTracker(() => {
@@ -288,9 +344,23 @@ export const TeamManagement: React.FC = () => {
 
     const startIndex = safePage * playersPerPage;
     const endIndex = startIndex + playersPerPage;
-    const newBatch = availablePlayers.slice(startIndex, endIndex);
+    let filteredPlayers = [...availablePlayers];
+    if (playerTypeFilter !== 'all') {
+      filteredPlayers = filteredPlayers.filter(
+        p => p.playerType.toLowerCase() === playerTypeFilter.toLowerCase()
+      );
+    } // ← this closing brace was missing
+
+  const sortedPlayers = filteredPlayers.sort((a, b) => {
+    const totalA = a.battingSkill + a.bowlingSkill + a.fieldingSkill;
+    const totalB = b.battingSkill + b.bowlingSkill + b.fieldingSkill;
+    return sortOrder === 'asc' ? totalA - totalB : totalB - totalA;
+  });
+
+    const newBatch = sortedPlayers.slice(startIndex, endIndex);
+    setFilteredPlayers(sortedPlayers); // NEW
     setCurrentBatch(newBatch);
-  };
+      };
 
 
   const getTotalPages = () => {
@@ -450,19 +520,25 @@ export const TeamManagement: React.FC = () => {
       <div className="available-players-panel">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3>Available Players</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button 
+              className="btn-customize"
+              onClick={() => setShowFilterModal(true)} // NEW
+            >
+              Filter
+          </button>
           <button 
             className="btn-customize"
             onClick={() => {
               setCurrentPage(0);
-              const playersPerPage = teams.length || 3;
-              const initialBatch = availablePlayers.slice(0, playersPerPage);
-              setCurrentBatch(initialBatch);
+              updateCurrentBatch(); // use updated method with sorting
               setShowAllocationModal(true);
             }}
             disabled={availablePlayers.length === 0}
           >
             Allocate Players
           </button>
+        </div>
       </div>
         
         {availablePlayers.length > 0 ? (
@@ -556,11 +632,12 @@ export const TeamManagement: React.FC = () => {
           
           <span className="pagination-info">
             Page {currentPage + 1} of {getTotalPages()} 
-            ({currentBatch.length} remaining in this batch, {availablePlayers.length} total available)
-            {/* Debug info - remove later */}
+            ({currentBatch.length} in this batch, {filteredPlayers.length} match filters)
             <br />
-            <small>Available: {availablePlayers.length}, Batch: {currentBatch.length}, Teams: {teams.length}</small>
-        </span>
+            <small>Available (filtered): {filteredPlayers.length}, Batch: {currentBatch.length}</small>
+            <br />
+          </span>
+
           <button 
             className="btn-pagination"
             onClick={handleNextPage}
@@ -575,7 +652,7 @@ export const TeamManagement: React.FC = () => {
     {/* Team Selection Modal */}
     {showTeamSelection && selectedPlayerForAllocation && (
       <div className="player-card-overlay">
-        <div className="team-assignment-modal">
+        <div className="filter-modal">
           <div className="assignment-header">
             <h2>Assign {selectedPlayerForAllocation.firstName} {selectedPlayerForAllocation.lastName}</h2>
             <button 
@@ -605,6 +682,53 @@ export const TeamManagement: React.FC = () => {
         </div>
       </div>
     )}
+    {showFilterModal && (
+        <div className="player-card-overlay">
+          <div className="filter-modal">
+            <div className="assignment-header">
+              <h2>Filter Available Players</h2>
+              <button className="close-btn" onClick={() => setShowFilterModal(false)}>×</button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <label>
+                Sort by Skill:
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}
+                >
+                  <option value="asc">Ascending</option>
+                  <option value="desc">Descending</option>
+                </select>
+              </label>
+
+              <label>
+                Player Type:
+                <select
+                  value={playerTypeFilter}
+                  onChange={(e) => setPlayerTypeFilter(e.target.value)}
+                >
+                  <option value="all">All</option>
+                  <option value="batsmen">Batsmen</option>
+                  <option value="bowler">Bowler</option>
+                  <option value="all-rounder">All-Rounder</option>
+                  <option value="wicket-keeper">Wicket-Keeper</option>
+                </select>
+              </label>
+
+              <button
+                className="btn-primary"
+                onClick={() => {
+                  setShowFilterModal(false);
+                  updateCurrentBatch();
+                }}
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
