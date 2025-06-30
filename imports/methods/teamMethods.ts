@@ -82,11 +82,11 @@ Meteor.methods({
     );
   },
 
-  'teams.setCaptain'(teamId: string, playerId: string) {
+  async 'teams.setCaptain'(teamId: string, playerId: string) {
     check(teamId, String);
     check(playerId, String);
 
-    const team = TeamsCollection.findOne({ _id: teamId });
+    const team = await TeamsCollection.findOneAsync({ _id: teamId });
     if (!team) {
       throw new Meteor.Error('team-not-found', 'Team not found');
     }
@@ -97,6 +97,23 @@ Meteor.methods({
     return TeamsCollection.updateAsync(
       { _id: teamId },
       { $set: { captainId: playerId } }
+    );
+  },
+  async 'teams.setViceCaptain'(teamId: string, playerId: string) {
+    check(teamId, String);
+    check(playerId, String);
+
+    const team = await TeamsCollection.findOneAsync({ _id: teamId });
+    if (!team) {
+      throw new Meteor.Error('team-not-found', 'Team not found');
+    }
+    if (!team.memberIds.includes(playerId)) {
+      throw new Meteor.Error('player-not-in-team', 'Player is not a member of this team');
+    }
+
+    return TeamsCollection.updateAsync(
+      { _id: teamId },
+      { $set: { viceCaptainId: playerId } }
     );
   }
 });

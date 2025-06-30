@@ -16,8 +16,37 @@ const teamManagementStyles = `
     margin-bottom: 20px;
     color: #856404;
   }
+  .floating-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 90%;
+    text-align: center;
+  }
+
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
   .captain-badge {
     color: #f39c12;
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+  .vice-captain-badge {
+    color: #e67e22;
     font-weight: bold;
     font-size: 0.9em;
   }
@@ -30,6 +59,20 @@ const teamManagementStyles = `
   }
   .btn-captain:hover {
     background-color: #e67e22;
+  }
+  .btn-vice-captain {
+    background-color: #e67e22;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    margin-right: 5px;
+  }
+  .btn-vice-captain:hover {
+    background-color: #d35400;
+  }
+  .btn-vice-captain:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
   }
   .btn-captain:disabled {
     background-color: #bdc3c7;
@@ -363,14 +406,47 @@ export const TeamManagement: React.FC = () => {
       }
     });
   };
+  const handleSetViceCaptain = (playerId: string) => {
+    if (!selectedTeamId) return;
+
+    Meteor.call('teams.setViceCaptain', selectedTeamId, playerId, (error: Error | null) => {
+      if (error) {
+        showMessage(`Error: ${error.message}`, 'error');
+      } else {
+        showMessage('Vice Captain set successfully!', 'success');
+      }
+    });
+  };
 
   const getTeamMembers = (team: TeamType): PlayerType[] => {
-  if (!team.memberIds || !players || players.length === 0) return [];
-  return team.memberIds.map(id => players.find(p => p._id === id)).filter(Boolean) as PlayerType[];
-};
+    if (!team.memberIds || !players || players.length === 0) return [];
+    const teamPlayers = team.memberIds.map(id => players.find(p => p._id === id)).filter(Boolean) as PlayerType[];
+    
+    // Sort players: Captain first, then Vice Captain, then others
+    return teamPlayers.sort((a, b) => {
+      const aIsCaptain = team.captainId === a._id;
+      const bIsCaptain = team.captainId === b._id;
+      const aIsViceCaptain = team.viceCaptainId === a._id;
+      const bIsViceCaptain = team.viceCaptainId === b._id;
+      
+      // Captain comes first
+      if (aIsCaptain && !bIsCaptain) return -1;
+      if (!aIsCaptain && bIsCaptain) return 1;
+      
+      // Vice Captain comes second (after captain check)
+      if (aIsViceCaptain && !bIsViceCaptain && !bIsCaptain) return -1;
+      if (!aIsViceCaptain && bIsViceCaptain && !aIsCaptain) return 1;
+      
+      // For others, maintain original order by comparing their position in memberIds array
+      return team.memberIds.indexOf(a._id!) - team.memberIds.indexOf(b._id!);
+    });
+  };
 
   const getCaptain = (team: TeamType): PlayerType | undefined => {
     return team.captainId ? players.find(p => p._id === team.captainId) : undefined;
+  };
+  const getViceCaptain = (team: TeamType): PlayerType | undefined => {
+    return team.viceCaptainId ? players.find(p => p._id === team.viceCaptainId) : undefined;
   };
 
   if (isLoading) {
@@ -474,11 +550,12 @@ export const TeamManagement: React.FC = () => {
     <style>{teamManagementStyles}</style>
     <div className="team-management-container">
       {message && (
-         <div className={`${messageType === 'success' ? 'success-message' : 'error-message'}`} style={{ gridColumn: '1 / -1' }}>
+        <div 
+          className={`floating-message ${messageType === 'success' ? 'success-message' : 'error-message'}`}
+        >
           {message}
         </div>
       )}
-
       {/* Teams List Panel */}
       <div className="team-list-panel">
         <h3>Teams</h3>
@@ -578,6 +655,12 @@ export const TeamManagement: React.FC = () => {
                 <strong>Captain:</strong> {getCaptain(selectedTeam)?.firstName} {getCaptain(selectedTeam)?.lastName}
               </div>
             )}
+            {selectedTeam.viceCaptainId && (
+              <div className="team-captain">
+                <strong>Vice Captain:</strong> {getViceCaptain(selectedTeam)?.firstName} {getViceCaptain(selectedTeam)?.lastName}
+              </div>
+            )}
+
 
             <h4>Team Members ({(selectedTeam.memberIds || []).length})</h4>
 
@@ -600,6 +683,9 @@ export const TeamManagement: React.FC = () => {
                         {selectedTeam.captainId === player._id && (
                           <span className="captain-badge"> (C)</span>
                         )}
+                        {selectedTeam.viceCaptainId === player._id && (
+                          <span className="vice-captain-badge"> (VC)</span>
+                        )}
                       </td>
                       <td>{player.playerType}</td>
                       <td>{player.ageGroup}</td>
@@ -609,7 +695,15 @@ export const TeamManagement: React.FC = () => {
                             onClick={() => player._id && handleSetCaptain(player._id)}
                             className="btn-captain"
                           >
-                            Make Captain
+                            Captain
+                          </button>
+                        )}
+                        {selectedTeam.viceCaptainId !== player._id && selectedTeam.captainId !== player._id && (
+                          <button
+                            onClick={() => player._id && handleSetViceCaptain(player._id)}
+                            className="btn-vice-captain"
+                          >
+                            Vice Captain
                           </button>
                         )}
                         <button

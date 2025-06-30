@@ -4,6 +4,7 @@ export interface TeamType {
   _id?: string;
   name: string;
   captainId?: string;
+  viceCaptainId?: string;
   memberIds: string[];
   createdAt: Date;
 }
