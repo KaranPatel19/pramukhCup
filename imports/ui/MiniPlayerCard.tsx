@@ -9,7 +9,7 @@ const miniPlayerCardStyles = `
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(2, 0, 0, 0.84);
     width: 100%;
     height: 100%;
     position: relative;

@@ -700,12 +700,16 @@ button:disabled {
   background: white;
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  width: 90%;
+  width: 99%;
   max-width: 1000px;
-  max-height: 80vh;
+  height: 100vh;
+  max-height: 100vh;
   overflow-y: auto;
   animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
 }
+
 
 .cards-header {
   display: flex;
@@ -713,15 +717,15 @@ button:disabled {
   align-items: center;
   border-bottom: 1px solid #eee;
 }
-
 .cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px;
-  padding: 10px;
+  padding: 5px;
   perspective: 1000px;
+  flex: 1;
+  overflow-y: auto;
 }
-
 .team-assignment-modal {
   background: white;
   border-radius: 10px;
