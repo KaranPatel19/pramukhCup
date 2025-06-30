@@ -6,7 +6,7 @@ import { PlayersCollection, PlayerType } from '../api/players';
 export const DatabaseInspector: React.FC = () => {
   const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null);
   const { players, isLoading } = useTracker(() => {
-    const subscription = Meteor.subscribe('players');
+    const subscription = Meteor.subscribe('players'); 
     return {
       players: PlayersCollection.find({}, { sort: { createdAt: -1 } }).fetch(),
       isLoading: !subscription.ready(),
