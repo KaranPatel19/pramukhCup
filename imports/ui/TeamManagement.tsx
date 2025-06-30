@@ -207,7 +207,10 @@ export const TeamManagement: React.FC = () => {
   const allTeams = TeamsCollection.find({}, { sort: { createdAt: 1 } }).fetch();
   const allPlayers = PlayersCollection.find({}, { sort: { firstName: 1 } }).fetch();
   const currentSelectedTeam = selectedTeamId ? TeamsCollection.findOne({ _id: selectedTeamId }) : null;
-  const playersWithoutTeam = PlayersCollection.find({ teamId: { $exists: false } }, { sort: { firstName: 1 } }).fetch();
+    const playersWithoutTeam = PlayersCollection.find({ 
+    teamId: { $exists: false },
+    isFlagged: { $ne: true }
+  }, { sort: { firstName: 1 } }).fetch();
 
   return {
     teams: allTeams || [],
@@ -245,7 +248,71 @@ export const TeamManagement: React.FC = () => {
       }
     });
   };
+  const handleFlagPlayer = (playerId: string) => {
+      Meteor.call('players.flag', playerId, (error: Error | null) => {
+        if (error) {
+          showMessage(`Error: ${error.message}`, 'error');
+        } else {
+          showMessage('Player flagged successfully!', 'success');
+          
+          // Remove the flagged player and add a replacement from next batch
+          setCurrentBatch(prevBatch => {
+            const filteredBatch = prevBatch.filter(player => player._id !== playerId);
+            
+            // Get the next available player to replace the flagged one
+            const playersPerPage = teams.length || 3;
+            const currentBatchSize = prevBatch.length;
+            const startIndex = currentPage * playersPerPage;
+            const nextPlayerIndex = startIndex + currentBatchSize;
+            
+            // Apply the same filters as in updateCurrentBatch
+            let allFilteredPlayers = [...availablePlayers].map((p) => {
+              let total = p.battingSkill + p.bowlingSkill + p.fieldingSkill;
 
+              if (
+                howMuchDoYouPlayFilter !== 'all' &&
+                p.howMuchDoYouPlay?.toLowerCase() === howMuchDoYouPlayFilter.toLowerCase()
+              ) {
+                total = Math.min(30, Math.round(total * (1 + playPercentageBoost / 100)));
+              }
+
+              return { ...p, boostedStars: total }; 
+            });
+
+            if (playerTypeFilter !== 'all') {
+              allFilteredPlayers = allFilteredPlayers.filter(
+                p => p.playerType.toLowerCase() === playerTypeFilter.toLowerCase()
+              );
+            } 
+            if (howMuchDoYouPlayFilter !== 'all') {
+              allFilteredPlayers = allFilteredPlayers.filter(
+                p => p.howMuchDoYouPlay?.toLowerCase() === howMuchDoYouPlayFilter.toLowerCase()
+              );
+            }
+
+            const sortedPlayers = allFilteredPlayers.sort((a, b) =>
+              sortOrder === 'asc' ? a.boostedStars - b.boostedStars : b.boostedStars - a.boostedStars
+            );
+
+            // Get the next player that's not already in the current batch
+            const nextPlayer = sortedPlayers.find((player, index) => 
+              index >= nextPlayerIndex && 
+              !filteredBatch.some(batchPlayer => batchPlayer._id === player._id) &&
+              player._id !== playerId
+            );
+
+            // Add the replacement player if available
+            if (nextPlayer) {
+              return [...filteredBatch, nextPlayer];
+            }
+            
+            return filteredBatch;
+          });
+        }
+        setShowTeamSelection(false);
+        setSelectedPlayerForAllocation(null);
+      });
+    };
   const handleDeleteTeam = (teamId: string) => {
     if (window.confirm('Are you sure you want to delete this team? All players will be removed from the team.')) {
       Meteor.call('teams.delete', teamId, (error: Error | null) => {
@@ -459,7 +526,47 @@ export const TeamManagement: React.FC = () => {
           <div className="no-data">No teams created yet.</div>
         )}
       </div>
-
+      {/* Flag Players Panel */}
+        <div className="flag-players-panel">
+        <h3>Flagged Players</h3>
+        {(() => {
+          const flaggedPlayers = players.filter(p => p.isFlagged);
+          return flaggedPlayers.length > 0 ? (
+            <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              {flaggedPlayers.map((player) => (
+                <div key={player._id} style={{ 
+                  padding: '8px', 
+                  borderBottom: '1px solid #eee',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <span style={{ fontSize: '14px' }}>
+                    {player.firstName} {player.lastName}
+                  </span>
+                  <button
+                    className="btn-add"
+                    style={{ fontSize: '12px', padding: '4px 8px' }}
+                    onClick={() => {
+                      Meteor.call('players.unflag', player._id, (error: Error | null) => {
+                        if (error) {
+                          showMessage(`Error: ${error.message}`, 'error');
+                        } else {
+                          showMessage('Player unflagged!', 'success');
+                        }
+                      });
+                    }}
+                  >
+                    Unflag
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="no-data">No flagged players</div>
+          );
+        })()}
+      </div>
       {/* Team Detail Panel */}
       <div className="team-detail-panel">
         {selectedTeam ? (
@@ -688,6 +795,15 @@ export const TeamManagement: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+          <div style={{ padding: '20px', borderTop: '1px solid #eee' }}>
+            <button
+              className="btn-primary"
+              style={{ backgroundColor: '#e74c3c', width: '100%' }}
+              onClick={() => handleFlagPlayer(selectedPlayerForAllocation._id!)}
+            >
+              🚩 Flag This Player
+            </button>
           </div>
         </div>
       </div>

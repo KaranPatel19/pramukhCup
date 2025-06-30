@@ -16,6 +16,7 @@ export interface PlayerType {
   photo: string;
   consent: string;
   teamId?: string;
+  isFlagged?: boolean;
   boostedStars?: number; 
   createdAt: Date;
 }

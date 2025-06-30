@@ -60,6 +60,15 @@ async 'players.uploadCsv'(csvData: string) {
     throw new Meteor.Error('upload-failed', error instanceof Error ? error.message : 'Unknown error');
   }
 },
+'players.flag'(playerId: string) {
+  check(playerId, String);
+  return PlayersCollection.updateAsync({ _id: playerId }, { $set: { isFlagged: true } });
+},
+
+'players.unflag'(playerId: string) {
+  check(playerId, String);
+  return PlayersCollection.updateAsync({ _id: playerId }, { $unset: { isFlagged: "" } });
+},
 
   /**
    * Upload players from Excel data
