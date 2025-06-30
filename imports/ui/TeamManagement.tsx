@@ -107,6 +107,9 @@ const teamManagementStyles = `
   .dark-mode .btn-pagination {
     background-color: #2980b9;
   }
+  .cards-header h3 {
+    color: white;
+  }
 
   .dark-mode .btn-pagination:hover:not(:disabled) {
     background-color: #3498db;
@@ -548,7 +551,6 @@ export const TeamManagement: React.FC = () => {
           </button>
         </div>
       </div>
-        
         {availablePlayers.length > 0 ? (
           <table className="available-players-table">
             <thead>
@@ -590,7 +592,7 @@ export const TeamManagement: React.FC = () => {
         <div className="cards-grid">
           <div className="cards-header">
           <h3>Choose Player to Allocate - Showing {teams.length || 3} at a time</h3>
-          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
+          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#ffffff' }}>
             {availablePlayers.length} total players available
           </p>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>

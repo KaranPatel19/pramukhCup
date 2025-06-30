@@ -4,7 +4,7 @@ import { PlayerType } from '../api/players';
 const miniPlayerCardStyles = `
   /* Pokemon-style card enhancements */
   .mini-player-card {
-    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    background: linear-gradient(145deg,rgb(50, 53, 54),rgb(66, 69, 71));
     border: 2px solid #ddd;
     border-radius: 12px;
     cursor: pointer;

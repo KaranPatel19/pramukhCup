@@ -697,7 +697,7 @@ button:disabled {
   background-color: #e67e22;
 }
 .cards-grid {
-  background: white;
+  background: rgb(90, 87, 87);
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   width: 99%;
@@ -725,6 +725,8 @@ button:disabled {
   perspective: 1000px;
   flex: 1;
   overflow-y: auto;
+  background: linear-gradient(135deg, #040008, #04000a, #04000c);
+  border-radius: 8px;
 }
 .team-assignment-modal {
   background: white;
