@@ -10,7 +10,8 @@ const miniPlayerCardStyles = `
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 290px;
+    width: 100%;
+    height: 100%;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -21,7 +22,7 @@ const miniPlayerCardStyles = `
   .mini-player-card img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 10px; /* Slightly smaller than card border-radius */
   }
 

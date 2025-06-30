@@ -589,7 +589,7 @@ export const TeamManagement: React.FC = () => {
       <div className="player-card-overlay">
         <div className="cards-grid">
           <div className="cards-header">
-          <h2>Choose Player to Allocate - Showing {teams.length || 3} at a time</h2>
+          <h3>Choose Player to Allocate - Showing {teams.length || 3} at a time</h3>
           <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
             {availablePlayers.length} total players available
           </p>

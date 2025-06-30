@@ -711,7 +711,6 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
   border-bottom: 1px solid #eee;
 }
 
@@ -719,7 +718,7 @@ button:disabled {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px;
-  padding: 20px;
+  padding: 10px;
   perspective: 1000px;
 }
 
