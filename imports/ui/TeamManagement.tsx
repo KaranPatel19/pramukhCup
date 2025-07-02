@@ -216,6 +216,7 @@ const teamManagementStyles = `
 
 `;
 export const TeamManagement: React.FC = () => {
+  const [allocatedTeamsInBatch, setAllocatedTeamsInBatch] = useState<Set<string>>(new Set());
   const [newTeamName, setNewTeamName] = useState<string>('');
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -454,7 +455,7 @@ export const TeamManagement: React.FC = () => {
   }
   const handleAllocatePlayer = (teamId: string) => {
   if (!selectedPlayerForAllocation?._id) return;
-  
+
   Meteor.call('teams.addPlayer', teamId, selectedPlayerForAllocation._id, (error: Error | null) => {
       if (error) {
         showMessage(`Error: ${error.message}`, 'error');
@@ -463,6 +464,8 @@ export const TeamManagement: React.FC = () => {
         setCurrentBatch(prevBatch => 
           prevBatch.filter(player => player._id !== selectedPlayerForAllocation._id)
         );
+        // Add the team to allocated teams for this batch
+        setAllocatedTeamsInBatch(prev => new Set([...prev, teamId]));
       }
       setShowTeamSelection(false);
       setSelectedPlayerForAllocation(null);
@@ -531,6 +534,7 @@ export const TeamManagement: React.FC = () => {
       setCurrentPage(currentPage + 1);
       setTimeout(() => updateCurrentBatch(), 0);
     }
+    setAllocatedTeamsInBatch(new Set());
   };
 
   const handlePrevPage = () => {
@@ -538,6 +542,7 @@ export const TeamManagement: React.FC = () => {
       setCurrentPage(currentPage - 1);
       setTimeout(() => updateCurrentBatch(), 0);
     }
+    setAllocatedTeamsInBatch(new Set());
   };
 
   const handlePageReset = () => {
@@ -877,7 +882,7 @@ export const TeamManagement: React.FC = () => {
             </button>
           </div>
           <div className="teams-selection">
-            {teams.map((team) => (
+            {teams.filter(team => !allocatedTeamsInBatch.has(team._id!)).map((team) => (
               <div 
                 key={team._id}
                 className="team-option"
@@ -929,7 +934,7 @@ export const TeamManagement: React.FC = () => {
                   onChange={(e) => setPlayerTypeFilter(e.target.value)}
                 >
                   <option value="all">All</option>
-                  <option value="batsmen">Batsmen</option>
+                  <option value="batsman">Batsman</option>
                   <option value="bowler">Bowler</option>
                   <option value="all-rounder">All-Rounder</option>
                   <option value="wicket-keeper">Wicket-Keeper</option>
