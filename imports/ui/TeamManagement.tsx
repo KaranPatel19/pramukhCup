@@ -328,11 +328,6 @@ export const TeamManagement: React.FC = () => {
                 p => p.playerType.toLowerCase() === playerTypeFilter.toLowerCase()
               );
             } 
-            if (howMuchDoYouPlayFilter !== 'all') {
-              allFilteredPlayers = allFilteredPlayers.filter(
-                p => p.howMuchDoYouPlay?.toLowerCase() === howMuchDoYouPlayFilter.toLowerCase()
-              );
-            }
 
             const sortedPlayers = allFilteredPlayers.sort((a, b) =>
               sortOrder === 'asc' ? a.boostedStars - b.boostedStars : b.boostedStars - a.boostedStars
@@ -502,11 +497,6 @@ export const TeamManagement: React.FC = () => {
         p => p.playerType.toLowerCase() === playerTypeFilter.toLowerCase()
       );
     } 
-    if (howMuchDoYouPlayFilter !== 'all') {
-      filteredPlayers = filteredPlayers.filter(
-        p => p.howMuchDoYouPlay?.toLowerCase() === howMuchDoYouPlayFilter.toLowerCase()
-      );
-    }
 
     const sortedPlayers = filteredPlayers.sort((a, b) =>
       sortOrder === 'asc' ? a.boostedStars - b.boostedStars : b.boostedStars - a.boostedStars
