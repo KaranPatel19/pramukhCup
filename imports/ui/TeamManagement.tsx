@@ -482,24 +482,20 @@ export const TeamManagement: React.FC = () => {
 
   const updateCurrentBatch = () => {
     const playersPerPage = teams.length || 3;
-    const totalPages = Math.ceil(availablePlayers.length / playersPerPage);
-    const safePage = Math.min(currentPage, Math.max(totalPages - 1, 0));
-    setCurrentPage(safePage);
-
-    const startIndex = safePage * playersPerPage;
-    const endIndex = startIndex + playersPerPage;
+    
+    // First, filter and sort all players
     let filteredPlayers = [...availablePlayers].map((p) => {
-    let total = p.battingSkill + p.bowlingSkill + p.fieldingSkill;
+      let total = p.battingSkill + p.bowlingSkill + p.fieldingSkill;
 
-    if (
-      howMuchDoYouPlayFilter !== 'all' &&
-      p.howMuchDoYouPlay?.toLowerCase() === howMuchDoYouPlayFilter.toLowerCase()
-    ) {
-      total = Math.min(30, Math.round(total * (1 + playPercentageBoost / 100)));
-    }
+      if (
+        howMuchDoYouPlayFilter !== 'all' &&
+        p.howMuchDoYouPlay?.toLowerCase() === howMuchDoYouPlayFilter.toLowerCase()
+      ) {
+        total = Math.min(30, Math.round(total * (1 + playPercentageBoost / 100)));
+      }
 
-    return { ...p, boostedStars: total }; 
-  });
+      return { ...p, boostedStars: total }; 
+    });
 
     if (playerTypeFilter !== 'all') {
       filteredPlayers = filteredPlayers.filter(
@@ -512,20 +508,27 @@ export const TeamManagement: React.FC = () => {
       );
     }
 
-  const sortedPlayers = filteredPlayers.sort((a, b) =>
-  sortOrder === 'asc' ? a.boostedStars - b.boostedStars : b.boostedStars - a.boostedStars
-);
+    const sortedPlayers = filteredPlayers.sort((a, b) =>
+      sortOrder === 'asc' ? a.boostedStars - b.boostedStars : b.boostedStars - a.boostedStars
+    );
 
+    // Calculate total pages based on filtered players, not all available players
+    const totalPages = Math.ceil(sortedPlayers.length / playersPerPage);
+    const safePage = Math.min(currentPage, Math.max(totalPages - 1, 0));
+    setCurrentPage(safePage);
 
+    const startIndex = safePage * playersPerPage;
+    const endIndex = startIndex + playersPerPage;
     const newBatch = sortedPlayers.slice(startIndex, endIndex);
+    
     setFilteredPlayers(sortedPlayers); 
     setCurrentBatch(newBatch);
-      };
+  };
 
 
   const getTotalPages = () => {
     const playersPerPage = teams.length || 3;
-    return Math.ceil(availablePlayers.length / playersPerPage);
+    return Math.ceil(filteredPlayers.length / playersPerPage);
   };
 
   const handleNextPage = () => {
